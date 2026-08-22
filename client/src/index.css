@@ -43,39 +43,39 @@
 }
 
 :root {
-  --primary: var(--color-blue-700);
-  --primary-foreground: var(--color-blue-50);
-  --sidebar-primary: var(--color-blue-600);
-  --sidebar-primary-foreground: var(--color-blue-50);
+  --primary: #2925D8;
+  --primary-foreground: #F8F8FC;
+  --sidebar-primary: #2925D8;
+  --sidebar-primary-foreground: #F8F8FC;
   --chart-1: var(--color-blue-300);
   --chart-2: var(--color-blue-500);
   --chart-3: var(--color-blue-600);
   --chart-4: var(--color-blue-700);
   --chart-5: var(--color-blue-800);
-  --radius: 0.65rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.235 0.015 65);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.235 0.015 65);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.235 0.015 65);
-  --secondary: oklch(0.98 0.001 286.375);
-  --secondary-foreground: oklch(0.4 0.015 65);
-  --muted: oklch(0.967 0.001 286.375);
-  --muted-foreground: oklch(0.552 0.016 285.938);
-  --accent: oklch(0.967 0.001 286.375);
-  --accent-foreground: oklch(0.141 0.005 285.823);
+  --radius: 0.75rem;
+  --background: #F8F8FC;
+  --foreground: #11172B;
+  --card: #ffffff;
+  --card-foreground: #11172B;
+  --popover: #ffffff;
+  --popover-foreground: #11172B;
+  --secondary: #F0F0F7;
+  --secondary-foreground: #51556A;
+  --muted: #F2F2F7;
+  --muted-foreground: #727588;
+  --accent: #F0F0FF;
+  --accent-foreground: #2925D8;
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(0.92 0.004 286.32);
-  --input: oklch(0.92 0.004 286.32);
-  --ring: oklch(0.623 0.214 259.815);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.235 0.015 65);
-  --sidebar-accent: oklch(0.967 0.001 286.375);
-  --sidebar-accent-foreground: oklch(0.141 0.005 285.823);
-  --sidebar-border: oklch(0.92 0.004 286.32);
-  --sidebar-ring: oklch(0.623 0.214 259.815);
+  --border: #E4E4EC;
+  --input: #E4E4EC;
+  --ring: #2925D8;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #11172B;
+  --sidebar-accent: #F0F0FF;
+  --sidebar-accent-foreground: #2925D8;
+  --sidebar-border: #E4E4EC;
+  --sidebar-ring: #2925D8;
 }
 
 .dark {
@@ -119,6 +119,7 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: "Plus Jakarta Sans", sans-serif;
   }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
@@ -174,4 +175,91 @@
       max-width: 1280px; /* Standard content width */
     }
   }
+
+  .font-display { font-family: "DM Serif Display", Georgia, serif; }
+  .siteflow-primary-btn { display: inline-flex; align-items: center; gap: .5rem; border-radius: .7rem; background: #2925D8; color: #fff; padding: .75rem 1rem; font-size: .8125rem; font-weight: 800; box-shadow: 0 6px 16px rgba(41,37,216,.17); transition: transform 160ms cubic-bezier(.23,1,.32,1), box-shadow 160ms cubic-bezier(.23,1,.32,1), background 160ms ease; }
+  .siteflow-primary-btn:hover { background: #201cb5; box-shadow: 0 9px 20px rgba(41,37,216,.24); transform: translateY(-1px); }
+  .siteflow-primary-btn:active, .siteflow-secondary-btn:active { transform: scale(.97); }
+  .siteflow-secondary-btn { display: inline-flex; align-items: center; gap: .5rem; border: 1px solid #DFE0EA; border-radius: .7rem; background: #fff; color: #4E5265; padding: .75rem 1rem; font-size: .8125rem; font-weight: 800; transition: border-color 160ms ease, background 160ms ease, transform 160ms ease; }
+  .siteflow-secondary-btn:hover { border-color: #BABBE3; background: #F8F8FD; }
+  .siteflow-nav-item { display:flex; width:100%; align-items:center; gap:.75rem; border-radius:.75rem; padding:.68rem .75rem; font-size:.8125rem; font-weight:700; color:#707386; transition: background 160ms ease, color 160ms ease; }
+  .siteflow-nav-item:hover { background:#F5F5FA; color:#2925D8; }
+  .siteflow-nav-item-active { background:#F0F0FF; color:#2925D8; }
+  .siteflow-upgrade-card { display:flex; width:100%; gap:.65rem; border-radius:.8rem; background:#F6F6FF; padding:.75rem; text-align:left; }
+  .siteflow-upgrade-card strong { display:block; font-size:.7rem; color:#3639A9; }
+  .siteflow-upgrade-card small { display:block; margin-top:.15rem; font-size:.65rem; line-height:1.15; color:#777AB9; }
+  .siteflow-search { display:flex; align-items:center; gap:.6rem; border:1px solid #E1E1EA; border-radius:.75rem; background:#fff; padding:.72rem .85rem; color:#85889A; }
+  .siteflow-search:focus-within { border-color:#8A8CE5; box-shadow:0 0 0 3px rgba(41,37,216,.08); }
+  .siteflow-search input { width:100%; border:0; background:transparent; font-size:.8125rem; outline:none; color:#171C31; }
+  .siteflow-input, .siteflow-field input, .siteflow-field textarea { border:1px solid #E0E1EB; border-radius:.7rem; background:#fff; padding:.65rem .75rem; font-size:.75rem; outline:none; color:#171C31; transition:border-color 160ms ease, box-shadow 160ms ease; }
+  .siteflow-input:focus, .siteflow-field input:focus, .siteflow-field textarea:focus { border-color:#898BE6; box-shadow:0 0 0 3px rgba(41,37,216,.08); }
+  .siteflow-modal-backdrop { position:fixed; inset:0; z-index:70; display:grid; place-items:center; padding:1rem; background:rgba(17,23,43,.38); backdrop-filter:blur(5px); }
+  .siteflow-dialog { width:min(100%, 720px); overflow:hidden; border:1px solid rgba(255,255,255,.55); border-radius:1.4rem; background:#fff; box-shadow:0 24px 90px rgba(17,20,70,.25); animation:siteflowEnter 220ms cubic-bezier(.23,1,.32,1); }
+  .siteflow-loader { height:28px; width:28px; border:3px solid #E0E0F5; border-top-color:#2925D8; border-radius:999px; animation:spin .7s linear infinite; }
+
+  .siteflow-editor-header { position:sticky; top:0; z-index:40; display:flex; height:69px; align-items:center; justify-content:space-between; gap:1rem; border-bottom:1px solid #E2E2EA; background:rgba(255,255,255,.94); padding:0 .95rem; backdrop-filter:blur(14px); }
+  .siteflow-editor-rail { display:flex; width:68px; flex-shrink:0; flex-direction:column; align-items:center; border-right:1px solid #E2E2EA; background:#fff; }
+  .siteflow-rail-btn { display:grid; height:38px; width:38px; place-items:center; border-radius:.65rem; color:#6F7286; transition:background 160ms ease, color 160ms ease; }
+  .siteflow-rail-btn:hover { background:#F3F3F9; color:#2925D8; }
+  .siteflow-rail-btn-active { background:#ECECFF; color:#2925D8; box-shadow:inset 0 0 0 1px rgba(41,37,216,.08); }
+  .siteflow-editor-panel { width:280px; flex-shrink:0; border-right:1px solid #E2E2EA; background:#fff; }
+  .siteflow-canvas-wrap { min-width:0; flex:1; overflow:auto; background-color:#F2F2F7; background-image:radial-gradient(#D6D6E2 .85px, transparent .85px); background-size:16px 16px; }
+  .siteflow-canvas-stage { display:flex; min-height:calc(100vh - 69px); justify-content:center; padding:48px 34px 160px; }
+  .siteflow-canvas-zoom { flex-shrink:0; transition:width 180ms cubic-bezier(.23,1,.32,1), transform 180ms cubic-bezier(.23,1,.32,1); }
+  .siteflow-document { min-height:720px; overflow:hidden; background:#fff; box-shadow:0 10px 35px rgba(19,23,84,.13); }
+  .siteflow-inspector { width:286px; flex-shrink:0; border-left:1px solid #E2E2EA; background:#fff; }
+  .siteflow-inspector-empty { display:grid; height:100%; place-content:center; padding:2rem; color:#30344E; }
+  .siteflow-inspector-empty h3 { text-align:center; }
+  .siteflow-icon-btn { display:grid; height:34px; width:34px; place-items:center; border-radius:.55rem; color:#55596F; transition:background 150ms ease, color 150ms ease; }
+  .siteflow-icon-btn:hover:not(:disabled) { background:#F0F0F6; color:#2925D8; }
+  .siteflow-icon-btn:disabled { cursor:not-allowed; opacity:.35; }
+  .siteflow-icon-btn-active { background:#ECECFF; color:#2925D8; }
+  .siteflow-element-tile { display:flex; min-height:74px; flex-direction:column; justify-content:space-between; border:1px solid #E4E4EC; border-radius:.75rem; background:#fff; padding:.65rem; text-align:left; font-size:.7rem; font-weight:800; color:#4E5267; transition:border 160ms ease, box-shadow 160ms ease, transform 160ms ease; }
+  .siteflow-element-tile:hover { border-color:#AFAFE6; box-shadow:0 5px 14px rgba(41,37,216,.09); transform:translateY(-1px); }
+  .siteflow-field { display:flex; flex-direction:column; gap:.4rem; font-size:.7rem; font-weight:800; color:#5F6377; }
+  .siteflow-field textarea { min-height:80px; resize:vertical; }
+  .siteflow-field input[type="color"] { height:34px; width:34px; flex-shrink:0; padding:2px; }
+  .siteflow-field > span:has(input) { display:flex; }
+  .siteflow-field > span:has(input) input:not([type="color"]) { min-width:0; flex:1; }
+  .siteflow-toggle { display:grid; height:34px; place-items:center; border:1px solid #E0E1EB; border-radius:.6rem; color:#696D80; }
+  .siteflow-toggle:hover { border-color:#AFAFE6; color:#2925D8; }
+  .siteflow-canvas-toolbar { position:sticky; top:69px; z-index:20; display:flex; gap:.5rem; overflow:auto; border-bottom:1px solid #E2E2EA; background:rgba(255,255,255,.96); padding:.55rem .75rem; backdrop-filter:blur(8px); }
+  .siteflow-canvas-toolbar button { display:flex; flex-shrink:0; align-items:center; gap:.35rem; border-radius:.55rem; background:#F3F3F9; padding:.45rem .6rem; font-size:.68rem; font-weight:800; color:#5B5F75; }
+  .siteflow-mobile-properties { position:fixed; z-index:45; bottom:12px; left:12px; right:12px; display:flex; align-items:center; justify-content:space-between; border:1px solid #D5D6E8; border-radius:1rem; background:rgba(255,255,255,.96); padding:.7rem .8rem; box-shadow:0 14px 38px rgba(20,24,73,.17); backdrop-filter:blur(12px); }
+  .siteflow-mobile-sheet-backdrop { position:fixed; inset:0; z-index:60; display:flex; align-items:flex-end; background:rgba(17,23,43,.3); }
+  .siteflow-mobile-sheet { width:100%; border-radius:1.25rem 1.25rem 0 0; background:#fff; padding:1rem; box-shadow:0 -18px 45px rgba(17,20,72,.15); animation:siteflowSheetIn 220ms cubic-bezier(.23,1,.32,1); }
+  .siteflow-node { outline:1px solid transparent; outline-offset:-1px; transition:outline-color 120ms ease, box-shadow 120ms ease; }
+  .siteflow-node-selected { z-index:3; outline:2px solid #2925D8; outline-offset:-2px; box-shadow:inset 0 0 0 2px rgba(41,37,216,.08); }
+  .siteflow-selection-label { position:absolute; z-index:8; top:-25px; left:0; display:flex; align-items:center; gap:.4rem; border-radius:.35rem .35rem 0 0; background:#2925D8; padding:.25rem .4rem; color:#fff; font-family:"Plus Jakarta Sans",sans-serif; font-size:10px; font-weight:800; line-height:1; }
+  .siteflow-selection-label button { display:grid; height:14px; width:14px; place-items:center; border-radius:3px; background:rgba(255,255,255,.18); cursor:grab; font-size:10px; }
+  .siteflow-resize-handle { position:absolute; right:-5px; bottom:-5px; z-index:8; height:10px; width:10px; border:2px solid #fff; border-radius:50%; background:#2925D8; cursor:nwse-resize; }
+  .siteflow-document a { text-decoration:none; cursor:pointer; }
+  .siteflow-document h2, .siteflow-document h3, .siteflow-document p { margin-top:0; }
+  .siteflow-document img { max-width:100%; height:auto; }
+}
+
+@keyframes siteflowEnter { from { opacity:0; transform:translateY(10px) scale(.985); } to { opacity:1; transform:translateY(0) scale(1); } }
+@keyframes siteflowSheetIn { from { opacity:0; transform:translateY(28px); } to { opacity:1; transform:translateY(0); } }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+@media (max-width: 900px) {
+  .siteflow-editor-rail, .siteflow-editor-panel, .siteflow-inspector { display:none; }
+  .siteflow-canvas-toolbar { position:fixed; top:auto; right:0; bottom:0; left:0; z-index:55; height:68px; justify-content:space-around; gap:0; overflow:visible; border-top:1px solid #DCDDE8; border-bottom:0; padding:.35rem .25rem calc(.35rem + env(safe-area-inset-bottom)); box-shadow:0 -8px 26px rgba(17,20,72,.08); }
+  .siteflow-canvas-toolbar button { flex:1; flex-direction:column; justify-content:center; gap:.2rem; background:transparent; padding:.3rem .1rem; font-size:.58rem; }
+  .siteflow-canvas-toolbar button:hover { color:#2925D8; }
+  .siteflow-canvas-stage { min-height:calc(100vh - 69px); padding:28px 14px 118px; }
+  .siteflow-mobile-properties { bottom:82px; }
+  .siteflow-canvas-zoom { max-width:100%; }
+  .siteflow-document { min-height:580px; }
+}
+
+@media (max-width: 480px) {
+  .siteflow-document nav { flex-wrap:wrap; align-items:flex-start !important; gap:.85rem !important; }
+  .siteflow-document nav > div { flex-wrap:wrap; gap:.55rem !important; font-size:.68rem !important; }
+  .siteflow-document nav > div span:nth-child(n+3) { display:none; }
+  .siteflow-document nav > span { font-size:1.35rem !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; scroll-behavior:auto !important; transition-duration:.01ms !important; }
 }

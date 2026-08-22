@@ -1,0 +1,26 @@
+# Project TODO
+
+- [x] Mettre en place le modèle persistant Workspace → Site → Pages → Arbre d’éléments et ses procédures sécurisées.
+- [x] Créer les migrations de base de données pour les espaces, sites, pages, versions, actifs, collections CMS et formulaires.
+- [x] Construire le shell SiteFlow Pro : rail de navigation, en-tête, états de chargement et authentification.
+- [x] Implémenter le tableau de bord My Sites avec recherche, filtres, favoris et actions de site.
+- [x] Implémenter le parcours Create Website : choix vide ou template, nommage, création et redirection vers l’éditeur.
+- [x] Construire l’éditeur visuel avec canevas, sélection, déplacement, redimensionnement, inspecteur et autosauvegarde.
+- [x] Implémenter l’ajout d’éléments, sections, composants, pages et le panneau hiérarchique des calques.
+- [x] Mettre en œuvre les vues Desktop, Tablet et Mobile avec surcharges spécifiques par breakpoint.
+- [x] Mettre en œuvre annuler/rétablir, aperçu, checklist de publication, publication et rendu public depuis la même donnée.
+- [x] Ajouter la bibliothèque de templates avec les dix familles demandées et un flux d’aperçu/import.
+- [x] Ajouter les espaces fonctionnels Assets, CMS, Forms, SEO et Analytics avec états explicites de démonstration si nécessaire.
+- [x] Ajouter une expérience mobile dédiée avec barre d’actions basse et propriétés en panneau inférieur.
+- [x] Ajouter des tests Vitest unitaires et valider le parcours critique dans le navigateur.
+- [x] Vérifier la compilation, les erreurs de console et la qualité visuelle sur desktop et mobile.
+- [x] Ajouter les actions directes Publier et Renommer dans les cartes du tableau de bord.
+- [x] Créer une bibliothèque de composants distincte dans l’éditeur, séparée des éléments de base et des sections.
+- [x] Remplacer la barre mobile haute par une navigation basse Add, Pages, Layers, Design, Assets et More.
+- [x] Valider le parcours critique par données persistées et rendu navigateur : créer, modifier, publier, prévisualiser et ouvrir le site public.
+- [x] Vérifier explicitement l’absence d’erreurs de console navigateur sur les écrans principaux desktop et mobile.
+- [x] Valider dans la prévisualisation authentifiée les écrans principaux desktop et mobile avec une console propre.
+- [x] Confirmer après redémarrage que l’ancienne erreur de dépendance ne réapparaît plus sur les routes principales.
+- [x] Parcourir explicitement les routes clés après redémarrage et vérifier les logs pour confirmer l’absence d’erreur de dépendance.
+- [ ] Exécuter un contrôle end-to-end par interaction navigateur authentifiée : créer, modifier, sauvegarder, recharger, prévisualiser, publier et ouvrir le site public.
+- [ ] Vérifier explicitement la console des écrans authentifiés principaux en desktop et mobile après navigation réelle sur ces routes.
