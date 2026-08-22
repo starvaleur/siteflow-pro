@@ -1,6 +1,7 @@
 import { SiteRenderer } from "@/components/siteflow/SiteRenderer";
 import { appendNode, createElement, duplicateNode, elementLabels, findNode, patchNodeStyle, removeNode, reorderSibling, updateNode } from "@/components/siteflow/tree";
 import { SiteFlowLogo } from "@/components/siteflow/AppShell";
+import { useIsMobile } from "@/hooks/useMobile";
 import { trpc } from "@/lib/trpc";
 import type { DeviceMode, ElementNode, ElementType, StyleMap } from "../../../shared/siteflow";
 import { AlignCenter, AlignLeft, AlignRight, Archive, ArrowDown, ArrowUp, BarChart3, Box, Check, ChevronDown, ChevronLeft, ChevronRight, CircleHelp, ClipboardCopy, Cloud, Code2, Copy, Database, Eye, FilePlus2, FileText, FolderOpen, FormInput, Globe2, Image, LayoutPanelLeft, Layers3, Link, Lock, Menu, Monitor, MoreHorizontal, MousePointer2, Palette, PanelLeftClose, Pencil, Plus, Redo2, Rocket, Search, Settings2, Smartphone, Sparkles, Tablet, Trash2, Undo2, Upload, Wand2, X } from "lucide-react";
@@ -29,6 +30,7 @@ export default function Editor() {
   const [, params] = useRoute("/editor/:id");
   const siteId = Number(params?.id);
   const [, setLocation] = useLocation();
+  const isMobile = useIsMobile();
   const utils = trpc.useUtils();
   const siteQuery = trpc.siteflow.get.useQuery({ siteId }, { enabled: Number.isFinite(siteId) && siteId > 0 });
   const [activePanel, setActivePanel] = useState<Panel>("add");
@@ -47,6 +49,10 @@ export default function Editor() {
   const pageHydrated = useRef<number | null>(null);
   const currentPage = useMemo(() => siteQuery.data?.pages.find((page) => page.id === currentPageId) ?? siteQuery.data?.pages[0], [currentPageId, siteQuery.data?.pages]);
   const selected = useMemo(() => selectedId ? findNode(tree, selectedId) : undefined, [selectedId, tree]);
+
+  useEffect(() => {
+    if (isMobile && device === "desktop") setDevice("mobile");
+  }, [device, isMobile]);
 
   const savePage = trpc.siteflow.pages.update.useMutation({
     onSuccess: (data) => { utils.siteflow.get.setData({ siteId }, data); setSaveStatus("saved"); },

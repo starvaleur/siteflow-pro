@@ -22,5 +22,7 @@
 - [x] Valider dans la prévisualisation authentifiée les écrans principaux desktop et mobile avec une console propre.
 - [x] Confirmer après redémarrage que l’ancienne erreur de dépendance ne réapparaît plus sur les routes principales.
 - [x] Parcourir explicitement les routes clés après redémarrage et vérifier les logs pour confirmer l’absence d’erreur de dépendance.
-- [ ] Exécuter un contrôle end-to-end par interaction navigateur authentifiée : créer, modifier, sauvegarder, recharger, prévisualiser, publier et ouvrir le site public.
-- [ ] Vérifier explicitement la console des écrans authentifiés principaux en desktop et mobile après navigation réelle sur ces routes.
+- [x] Exécuter un contrôle end-to-end par interaction navigateur authentifiée : créer, modifier, sauvegarder, recharger, prévisualiser, publier et ouvrir le site public.
+- [x] Vérifier explicitement la console des écrans authentifiés principaux en desktop et mobile après navigation réelle sur ces routes.
+- [x] Automatiser le parcours authentifié en viewport mobile sur le dashboard, l’éditeur et l’aperçu avec une assertion de console propre.
+- [x] Documenter séparément le résultat de la console mobile authentifiée après navigation réelle.
