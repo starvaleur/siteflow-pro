@@ -20,3 +20,16 @@ Une validation additionnelle a ensuite créé un projet Nexus temporaire via les
 Le contrôle final a utilisé une session locale de test limitée dans le temps et un navigateur Chromium isolé. Il a réellement effectué les actions de création d’un site, sélection du template Nexus, édition d’un titre, autosauvegarde, rechargement avec conservation du texte, ouverture de l’aperçu, publication via checklist et chargement de la page publique. L’instrumentation de la console dans cette session n’a relevé aucune erreur. Le site de test, le jeton et les scripts temporaires ont été supprimés immédiatement après la vérification.
 
 Le contrôle mobile séparé a utilisé le même principe avec un viewport de 390 × 844 px. Il a vérifié l’authentification, la création d’un site, la présence de la barre basse de l’éditeur (Ajouter, Pages, Calques, Design, Assets et Plus), l’ouverture de l’aperçu mobile et une console sans erreur. Ses données de test et artefacts de validation ont également été nettoyés.
+
+## Revue de fidélité Stitch — desktop
+
+| Zone | Référence Stitch | Résultat de la refonte | Verdict |
+| --- | --- | --- | --- |
+| Dashboard / navigation | Rail blanc fin, navigation compacte, zone de contenu très ouverte | Sidebar ramenée à 136 px, libellés et états actifs compacts, contenu sans en-tête générique superflu | Conforme à la hiérarchie et aux proportions recherchées |
+| Dashboard / commandes | Salutation à gauche, création à droite, recherche séparée des filtres et du tri | Même structure horizontale, avec recherche large, segments de statut, tri et bascule grille/liste | Conforme au rythme fonctionnel de la maquette |
+| Dashboard / cartes | Grande miniature, état, métadonnées en colonnes et actions en pied de carte | Carte documentaire avec miniature 242 px, statut, lignes métriques et actions bordées | Conforme au modèle de carte Stitch ; les données affichées restent celles du site réel |
+| Editor / cadre de travail | Top bar 68 px, rail 88 px, panneau Ajouter d’environ 340 px, fond pointillé, document fixe et inspecteur droit large | Ces dimensions et rôles sont désormais appliqués ; le canevas affiche la section Hero sélectionnée | Correspondance structurelle validée |
+| Editor / panneau Ajouter | Recherche et tuiles d’éléments à deux colonnes | Recherche fonctionnelle et tuiles Basic/Layout/Navigation/Formulaires avec même logique de grille | Conforme à la composition Stitch |
+| Editor / inspecteur Design | Onglet Design et groupes Typographie, Couleurs, Bordures & ombres | Onglet Design initial, sélection Hero visible et groupes de réglages structurés | Conforme au langage d’inspecteur Stitch |
+
+> La vérification s’appuie sur les captures desktop de `/` et `/editor/:id` à 1600 × 1280 px, comparées directement aux deux maquettes Stitch fournies. Le rapprochement porte sur la géométrie de l’interface et la hiérarchie de contrôle ; les contenus restent éditables et tirés du modèle de données réel.

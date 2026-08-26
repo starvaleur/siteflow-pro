@@ -26,3 +26,12 @@
 - [x] Vérifier explicitement la console des écrans authentifiés principaux en desktop et mobile après navigation réelle sur ces routes.
 - [x] Automatiser le parcours authentifié en viewport mobile sur le dashboard, l’éditeur et l’aperçu avec une assertion de console propre.
 - [x] Documenter séparément le résultat de la console mobile authentifiée après navigation réelle.
+- [x] Recueillir les retours précis de l’utilisateur sur les résultats à améliorer et définir les priorités de refonte.
+- [x] Comparer de manière visuelle les écrans actuels aux maquettes Stitch Dashboard et Editor pour relever les écarts structurels et de style.
+- [x] Reprendre le tableau de bord afin de respecter fidèlement la grille, les proportions, les cartes, la navigation et les espaces de la maquette Stitch.
+- [x] Reprendre l’éditeur afin de respecter fidèlement le canevas, les panneaux, la barre d’outils et l’inspecteur de la maquette Stitch.
+- [x] Valider la correspondance visuelle desktop des écrans refondus contre les références Stitch fournies.
+- [x] Documenter les écarts restants entre le dashboard refondu et la maquette Stitch, puis ajuster les proportions jusqu’à correspondance vérifiable.
+- [x] Documenter les écarts restants entre l’éditeur refondu et la maquette Stitch, puis ajuster la top bar, les panneaux, le canevas et l’inspecteur jusqu’à correspondance vérifiable.
+- [x] Consigner une comparaison desktop structurée dashboard + éditeur dans les notes de QA, avec verdict par zone.
+- [x] Vérifier par relecture la présence de la comparaison structurée dashboard + éditeur dans les notes QA Stitch.
