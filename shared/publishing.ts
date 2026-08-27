@@ -11,3 +11,10 @@ export function createPublishedSnapshot<TSite, TPage>(site: TSite, pages: TPage[
     publishedAt: publishedAt.toISOString(),
   };
 }
+
+export function materializePublishedSnapshot<TSite extends object, TPage>(currentSite: TSite, snapshot: PublishedSnapshot<Partial<TSite>, TPage>) {
+  return {
+    site: { ...currentSite, ...snapshot.site },
+    pages: snapshot.pages,
+  };
+}

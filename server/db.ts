@@ -1,8 +1,8 @@
 import { and, asc, desc, eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { assets, cmsCollections, InsertUser, sitePages, siteVersions, sites, users, workspaces, forms } from "../drizzle/schema";
-import { buildSiteFromTemplate, makeBlankPage, slugify, type ElementNode, type PageSettings } from "../shared/siteflow";
-import { createPublishedSnapshot } from "../shared/publishing";
+import { buildSiteFromTemplate, makeBlankPage, slugify, type ElementNode, type PageSettings, type SiteTheme } from "../shared/siteflow";
+import { createPublishedSnapshot, materializePublishedSnapshot } from "../shared/publishing";
 import { ENV } from "./_core/env";
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -173,6 +173,16 @@ export async function listVersionsForUser(userId: number, siteId: number) {
   const db = requireDb(await getDb());
   await getSiteForUser(userId, siteId);
   return db.select().from(siteVersions).where(eq(siteVersions.siteId, siteId)).orderBy(desc(siteVersions.createdAt));
+}
+
+export async function getVersionPreviewForUser(userId: number, versionId: number) {
+  const db = requireDb(await getDb());
+  const result = await db.select({ version: siteVersions, site: sites }).from(siteVersions).innerJoin(sites, eq(siteVersions.siteId, sites.id)).innerJoin(workspaces, eq(sites.workspaceId, workspaces.id)).where(and(eq(siteVersions.id, versionId), eq(workspaces.ownerId, userId))).limit(1);
+  const record = result[0];
+  if (!record) throw new Error("Cette version est introuvable ou vous n’y avez pas accès.");
+  const snapshot = record.version.snapshot as { site?: { theme?: SiteTheme }; pages?: Array<{ name: string; slug: string; isHomepage: boolean; sortOrder: number; settings: PageSettings; elementTree: ElementNode[] }>; publishedAt?: string };
+  if (!snapshot.pages?.length) throw new Error("Cette version ne contient pas de pages prévisualisables.");
+  return materializePublishedSnapshot(record.site, { site: snapshot.site ?? {}, pages: snapshot.pages, publishedAt: String(snapshot.publishedAt ?? record.version.createdAt) });
 }
 
 export async function restoreVersionForUser(userId: number, versionId: number) {

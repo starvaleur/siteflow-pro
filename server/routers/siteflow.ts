@@ -10,6 +10,7 @@ import {
   duplicateSiteForUser,
   getPublicSite,
   getSiteForUser,
+  getVersionPreviewForUser,
   listAssetsForUser,
   listCollectionsForUser,
   listFormsForUser,
@@ -38,6 +39,7 @@ export const siteflowRouter = router({
   duplicate: protectedProcedure.input(z.object({ siteId: z.number().int().positive() })).mutation(({ ctx, input }) => duplicateSiteForUser(ctx.user.id, ctx.user.name, input.siteId)),
   publish: protectedProcedure.input(z.object({ siteId: z.number().int().positive() })).mutation(({ ctx, input }) => publishSiteForUser(ctx.user.id, input.siteId)),
   versions: protectedProcedure.input(z.object({ siteId: z.number().int().positive() })).query(({ ctx, input }) => listVersionsForUser(ctx.user.id, input.siteId)),
+  versionPreview: protectedProcedure.input(z.object({ versionId: z.number().int().positive() })).query(({ ctx, input }) => getVersionPreviewForUser(ctx.user.id, input.versionId)),
   restoreVersion: protectedProcedure.input(z.object({ versionId: z.number().int().positive() })).mutation(({ ctx, input }) => restoreVersionForUser(ctx.user.id, input.versionId)),
   public: publicProcedure.input(z.object({ slug: z.string().min(1).max(180) })).query(({ input }) => getPublicSite(input.slug)),
   pages: router({
