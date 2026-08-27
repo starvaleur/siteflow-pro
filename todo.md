@@ -1,37 +1,49 @@
-# Project TODO
+# SiteFlow Pro — Editor Stabilization
 
-- [x] Mettre en place le modèle persistant Workspace → Site → Pages → Arbre d’éléments et ses procédures sécurisées.
-- [x] Créer les migrations de base de données pour les espaces, sites, pages, versions, actifs, collections CMS et formulaires.
-- [x] Construire le shell SiteFlow Pro : rail de navigation, en-tête, états de chargement et authentification.
-- [x] Implémenter le tableau de bord My Sites avec recherche, filtres, favoris et actions de site.
-- [x] Implémenter le parcours Create Website : choix vide ou template, nommage, création et redirection vers l’éditeur.
-- [x] Construire l’éditeur visuel avec canevas, sélection, déplacement, redimensionnement, inspecteur et autosauvegarde.
-- [x] Implémenter l’ajout d’éléments, sections, composants, pages et le panneau hiérarchique des calques.
-- [x] Mettre en œuvre les vues Desktop, Tablet et Mobile avec surcharges spécifiques par breakpoint.
-- [x] Mettre en œuvre annuler/rétablir, aperçu, checklist de publication, publication et rendu public depuis la même donnée.
-- [x] Ajouter la bibliothèque de templates avec les dix familles demandées et un flux d’aperçu/import.
-- [x] Ajouter les espaces fonctionnels Assets, CMS, Forms, SEO et Analytics avec états explicites de démonstration si nécessaire.
-- [x] Ajouter une expérience mobile dédiée avec barre d’actions basse et propriétés en panneau inférieur.
-- [x] Ajouter des tests Vitest unitaires et valider le parcours critique dans le navigateur.
-- [x] Vérifier la compilation, les erreurs de console et la qualité visuelle sur desktop et mobile.
-- [x] Ajouter les actions directes Publier et Renommer dans les cartes du tableau de bord.
-- [x] Créer une bibliothèque de composants distincte dans l’éditeur, séparée des éléments de base et des sections.
-- [x] Remplacer la barre mobile haute par une navigation basse Add, Pages, Layers, Design, Assets et More.
-- [x] Valider le parcours critique par données persistées et rendu navigateur : créer, modifier, publier, prévisualiser et ouvrir le site public.
-- [x] Vérifier explicitement l’absence d’erreurs de console navigateur sur les écrans principaux desktop et mobile.
-- [x] Valider dans la prévisualisation authentifiée les écrans principaux desktop et mobile avec une console propre.
-- [x] Confirmer après redémarrage que l’ancienne erreur de dépendance ne réapparaît plus sur les routes principales.
-- [x] Parcourir explicitement les routes clés après redémarrage et vérifier les logs pour confirmer l’absence d’erreur de dépendance.
-- [x] Exécuter un contrôle end-to-end par interaction navigateur authentifiée : créer, modifier, sauvegarder, recharger, prévisualiser, publier et ouvrir le site public.
-- [x] Vérifier explicitement la console des écrans authentifiés principaux en desktop et mobile après navigation réelle sur ces routes.
-- [x] Automatiser le parcours authentifié en viewport mobile sur le dashboard, l’éditeur et l’aperçu avec une assertion de console propre.
-- [x] Documenter séparément le résultat de la console mobile authentifiée après navigation réelle.
-- [x] Recueillir les retours précis de l’utilisateur sur les résultats à améliorer et définir les priorités de refonte.
-- [x] Comparer de manière visuelle les écrans actuels aux maquettes Stitch Dashboard et Editor pour relever les écarts structurels et de style.
-- [x] Reprendre le tableau de bord afin de respecter fidèlement la grille, les proportions, les cartes, la navigation et les espaces de la maquette Stitch.
-- [x] Reprendre l’éditeur afin de respecter fidèlement le canevas, les panneaux, la barre d’outils et l’inspecteur de la maquette Stitch.
-- [x] Valider la correspondance visuelle desktop des écrans refondus contre les références Stitch fournies.
-- [x] Documenter les écarts restants entre le dashboard refondu et la maquette Stitch, puis ajuster les proportions jusqu’à correspondance vérifiable.
-- [x] Documenter les écarts restants entre l’éditeur refondu et la maquette Stitch, puis ajuster la top bar, les panneaux, le canevas et l’inspecteur jusqu’à correspondance vérifiable.
-- [x] Consigner une comparaison desktop structurée dashboard + éditeur dans les notes de QA, avec verdict par zone.
-- [x] Vérifier par relecture la présence de la comparaison structurée dashboard + éditeur dans les notes QA Stitch.
+## Priority 1: Responsive Editor Layout
+- [ ] Implement Desktop collapsible sidebars (Left Panel & Right Inspector)
+- [ ] Implement Tablet layout (Collapsible Left, Overlay/Drawer Right)
+- [ ] Implement dedicated Mobile Editor (Top Bar + Bottom Nav)
+- [ ] Implement Mobile Bottom Sheet for properties
+
+## Priority 2: Canvas Usability
+- [ ] Implement Zoom controls (Zoom In, Zoom Out, Fit)
+- [ ] Ensure proper centering and workspace behavior
+- [ ] Prevent content clipping/squeezing when panels are open
+- [ ] Accurate device width simulation (Desktop/Tablet/Mobile)
+
+## Priority 3: Core Functionality Audit
+- [ ] Audit and fix all element operations (Add, Select, Edit, Delete, Duplicate)
+- [ ] Ensure real persistence (Save, Reload, Preview, Publish)
+- [ ] Verify Undo/Redo logic with canonical tree model
+
+## Priority 4: Context-Aware Inspector
+- [ ] Specific fields for Text elements (Heading, Paragraph)
+- [ ] Specific fields for Image elements (Upload, Alt, Fit)
+- [ ] Specific fields for Button elements (Link, Label, Hover)
+- [ ] Specific fields for Section elements (Layout, Padding, BG)
+
+## Priority 5: Hierarchical Layers
+- [ ] Build a real tree-based Layers panel
+- [ ] Support select, rename, hide, lock, duplicate, delete
+- [ ] Support drag-and-drop reordering
+
+## Priority 6: Theme & Global Styles
+- [ ] Expand Theme panel with Primary/Secondary/Accent/Surface colors
+- [ ] Add Global Typography settings (H1-H3, Body, Small)
+- [ ] Add Global UI styles (Radius, Shadows, Spacing)
+
+## Priority 7: Robust Loading & Error States
+- [ ] Fix blank screens during navigation
+- [ ] Add explicit loading states (Skeleton/Status messages)
+- [ ] Add error boundaries and retry mechanisms
+
+## Priority 8: Element Library Expansion
+- [ ] Add Icon, Video, Link elements
+- [ ] Add Layout elements (Columns, Stack)
+- [ ] Add Pre-built sections (Gallery, FAQ, Testimonials, Pricing)
+
+## Final Validation
+- [ ] Run full end-to-end journey test
+- [ ] Confirm mobile-specific style overrides work
+- [ ] Confirm published content matches editor state
