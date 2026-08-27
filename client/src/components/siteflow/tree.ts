@@ -15,6 +15,11 @@ export const elementLabels: Record<ElementType, string> = {
   form: "Formulaire",
   divider: "Séparateur",
   spacer: "Espace",
+  icon: "Icône",
+  video: "Vidéo",
+  link: "Lien",
+  columns: "Colonnes",
+  stack: "Empilement",
 };
 
 export function createElement(type: ElementType): ElementNode {
@@ -34,6 +39,11 @@ export function createElement(type: ElementType): ElementNode {
     form: { props: { title: "Restons en contact", button: "Envoyer" }, styles: { background: "#ffffff", border: "1px solid #E7E7EF", padding: "30px", borderRadius: "16px", maxWidth: "560px" } },
     divider: { props: {}, styles: { borderTop: "1px solid #E6E6EE", margin: "32px 0" } },
     spacer: { props: {}, styles: { height: "48px" } },
+    icon: { props: { symbol: "✦", label: "Icône décorative" }, styles: { display: "inline-grid", placeItems: "center", width: "48px", height: "48px", borderRadius: "14px", background: "#F0F0FF", color: "#2925D8", fontSize: "24px" } },
+    video: { props: { src: "", poster: "", controls: true }, styles: { width: "100%", maxWidth: "720px", borderRadius: "16px", display: "block" } },
+    link: { props: { label: "En savoir plus", href: "#" }, styles: { color: "#2925D8", fontWeight: 700, textDecoration: "underline" } },
+    columns: { props: { columns: 2 }, styles: { display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: "18px" } },
+    stack: { props: { direction: "vertical", gap: "16px" }, styles: { display: "flex", flexDirection: "column", gap: "16px" } },
   };
   return { ...common, ...presets[type] };
 }

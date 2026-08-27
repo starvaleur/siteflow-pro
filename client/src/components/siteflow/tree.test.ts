@@ -3,6 +3,14 @@ import { getTemplate } from "../../../../shared/siteflow";
 import { appendNode, applyUploadedImage, createElement, duplicateNode, findNode, historyRedo, historyUndo, moveNodeBefore, patchNodeStyle, pushHistory, removeNode, reorderSibling, updateNode } from "./tree";
 
 describe("arbre canonique SiteFlow", () => {
+  it("génère les nouveaux éléments de bibliothèque avec des valeurs par défaut valides", () => {
+    const nodes = (["icon", "video", "link", "columns", "stack"] as const).map(createElement);
+    expect(nodes.map((node) => node.type)).toEqual(["icon", "video", "link", "columns", "stack"]);
+    expect(nodes.find((node) => node.type === "video")?.props.controls).toBe(true);
+    expect(nodes.find((node) => node.type === "columns")?.props.columns).toBe(2);
+    expect(nodes.every((node) => node.visible && !node.locked && Array.isArray(node.children))).toBe(true);
+  });
+
   it("génère un template avec des pages et des arbres utilisables par le renderer", () => {
     const template = getTemplate("nexus-saas");
     expect(template.pages).toHaveLength(3);

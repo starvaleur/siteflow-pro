@@ -13,7 +13,12 @@ export type ElementType =
   | "footer"
   | "form"
   | "divider"
-  | "spacer";
+  | "spacer"
+  | "icon"
+  | "video"
+  | "link"
+  | "columns"
+  | "stack";
 
 export type StyleMap = Record<string, string | number | undefined>;
 
@@ -55,6 +60,17 @@ export type SiteTheme = {
   fontDisplay: string;
   fontBody: string;
   radius: string;
+  primary?: string;
+  secondary?: string;
+  surface?: string;
+  shadow?: string;
+  spacing?: string;
+  fontSmall?: string;
+  fontH1?: string;
+  fontH2?: string;
+  fontH3?: string;
+  fontBodySize?: string;
+  fontSmallSize?: string;
 };
 
 export type SiteBlueprint = {

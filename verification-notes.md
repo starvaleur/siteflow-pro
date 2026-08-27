@@ -9,3 +9,11 @@ The owned draft site at `/editor/270001` rendered successfully at 1280×720. The
 ## Preview and public route
 
 The owned draft preview at `/preview/270001` renders the same navbar, hero copy, typography, spacing, and primary action visible in the editor. The public route `/s/essai-06183` correctly shows the unavailable-page state because the site remains a draft; no publish mutation was executed during this verification pass.
+
+## Live hosted domain
+
+The published domain `https://siteflowpro-nnvlwst7.manus.space/` is reachable and renders the SiteFlow Pro authentication landing page with the branded mark, login call to action, and footer. The domain is live, but editor access requires an authenticated Manus session.
+
+The live hosted slug `https://siteflowpro-nnvlwst7.manus.space/s/essai-06183` returns a centered, readable unavailable-page state with a working return link because that site remains unpublished. This confirms the public route fails safely and does not expose draft content.
+
+The live database currently reports `0` published sites, so a real editor-to-published-site parity check cannot be completed without an authenticated user creating and publishing a site. The hosted app itself is reachable, and draft slugs correctly remain unavailable.

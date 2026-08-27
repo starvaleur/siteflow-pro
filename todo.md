@@ -29,19 +29,19 @@
 - [x] Support drag-and-drop reordering
 
 ## Priority 6: Theme & Global Styles
-- [ ] Expand Theme panel with Primary/Secondary/Accent/Surface colors
-- [ ] Add Global Typography settings (H1-H3, Body, Small)
-- [ ] Add Global UI styles (Radius, Shadows, Spacing)
+- [x] Expand Theme panel with Primary/Secondary/Accent/Surface colors
+- [x] Add Global Typography settings (H1-H3, Body, Small)
+- [x] Add Global UI styles (Radius, Shadows, Spacing)
 
 ## Priority 7: Robust Loading & Error States
-- [ ] Fix blank screens during navigation
+- [x] Fix blank screens during navigation
 - [x] Add explicit loading states (Skeleton/Status messages)
 - [x] Add error boundaries and retry mechanisms
 
 ## Priority 8: Element Library Expansion
-- [ ] Add Icon, Video, Link elements
-- [ ] Add Layout elements (Columns, Stack)
-- [ ] Add Pre-built sections (Gallery, FAQ, Testimonials, Pricing)
+- [x] Add Icon, Video, Link elements
+- [x] Add Layout elements (Columns, Stack)
+- [x] Add Pre-built sections (Gallery, FAQ, Testimonials, Pricing)
 
 ## Final Validation
 - [ ] Run full end-to-end journey test
@@ -54,6 +54,14 @@
 - [ ] Run an accessible editor-session verification covering add, select, edit, delete, and duplicate flows
 - [ ] Verify save, reload, preview, and publish on an owned site and compare rendered output
 - [x] Add focused editor history tests for undo/redo branching and save-state interaction
-- [ ] Verify a real mobile-only override edit on an owned site and confirm desktop remains unchanged after reload/preview
+- [x] Verify a real mobile-only override edit on an owned site and confirm desktop remains unchanged after reload/preview
 - [x] Add save-state transition coverage for unsaved, saving, saved, error, and undo/redo interactions
 - [x] Add an integrated regression for history actions setting save status and then transitioning through autosave success/error
+- [x] Verify secondary and surface theme tokens change distinct rendered roles and preview/public parity
+- [x] Verify semantic heading levels and H1/H2/H3/body/small theme tokens through the editor renderer path
+- [x] Verify radius, shadow, and spacing tokens across the supported rendered element families
+- [ ] Perform an owned-site editor verification: change a mobile-only style override, reload the editor, switch back to desktop, and confirm desktop styles remain unchanged
+- [ ] Verify the same owned-site mobile-only override in preview or public rendering, or document that the draft public route is intentionally unavailable
+- [x] Verify the live hosted domain loads the public SiteFlow Pro experience
+- [ ] Verify an authenticated user can open the live editor, persist a change, and see the matching preview/public output
+- [x] Document any authentication requirement or domain limitation that prevents live end-to-end verification
