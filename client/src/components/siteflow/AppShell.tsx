@@ -1,7 +1,7 @@
 import { startLogin } from "@/const";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { cn } from "@/lib/utils";
-import { ArrowRight, BarChart3, BookOpen, ChevronDown, CircleHelp, Code2, FileText, LayoutTemplate, Plus, Sparkles } from "lucide-react";
+import { BarChart3, BookOpen, ChevronDown, CircleHelp, Code2, FileText, LayoutTemplate, Plus, Sparkles } from "lucide-react";
 import type { ReactNode } from "react";
 import { useLocation } from "wouter";
 
@@ -33,18 +33,12 @@ export function AppShell({ children, title, action, chrome = "standard" }: AppSh
 
   if (!user) {
     return (
-      <main className="grid min-h-screen place-items-center bg-[#F8F8FC] px-5 relative overflow-hidden">
-        <div className="bg-dot-grid absolute inset-0 -z-10 opacity-40" />
-        <section className="w-full max-w-md rounded-[32px] border border-[#E5E5EF] bg-white p-10 text-center shadow-[0_40px_100px_rgba(17,20,70,.08)] relative">
-          <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-white p-4 rounded-2xl border border-[#E5E5EF] shadow-xl">
-            <SiteFlowLogo compact />
-          </div>
-          <h1 className="font-display text-4xl leading-tight text-[#11172B] mt-4">Bienvenue dans l’Atelier.</h1>
-          <p className="mt-4 text-sm leading-relaxed text-[#61657A]">Identifiez-vous pour accéder à vos projets, vos templates et vos sites en ligne.</p>
-          <button onClick={() => startLogin()} className="siteflow-primary-btn mt-8 w-full justify-center !py-4 shadow-2xl">
-            Se connecter avec Manus <ArrowRight className="h-4 w-4" />
-          </button>
-          <p className="mt-8 text-[11px] font-bold uppercase tracking-widest text-[#A2A4B2]">Accès sécurisé · v2.0</p>
+      <main className="grid min-h-screen place-items-center bg-[#F8F8FC] px-5">
+        <section className="w-full max-w-md rounded-[24px] border border-[#E5E5EF] bg-white p-9 text-center shadow-[0_20px_80px_rgba(41,37,216,.08)]">
+          <div className="mx-auto mb-7 w-fit"><SiteFlowLogo /></div>
+          <h1 className="font-display text-4xl leading-tight text-[#11172B]">L’atelier de votre prochain site.</h1>
+          <p className="mt-4 text-sm leading-6 text-[#61657A]">Connectez-vous pour retrouver vos espaces, vos sites et vos versions publiées.</p>
+          <button onClick={() => startLogin()} className="siteflow-primary-btn mt-7 w-full justify-center">Se connecter</button>
         </section>
       </main>
     );
