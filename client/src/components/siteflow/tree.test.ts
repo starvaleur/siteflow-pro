@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { getTemplate } from "../../../../shared/siteflow";
-import { appendNode, createElement, duplicateNode, findNode, patchNodeStyle, removeNode, reorderSibling, updateNode } from "./tree";
+import { appendNode, applyUploadedImage, createElement, duplicateNode, findNode, historyRedo, historyUndo, moveNodeBefore, patchNodeStyle, pushHistory, removeNode, reorderSibling, updateNode } from "./tree";
 
 describe("arbre canonique SiteFlow", () => {
   it("génère un template avec des pages et des arbres utilisables par le renderer", () => {
@@ -30,6 +30,52 @@ describe("arbre canonique SiteFlow", () => {
     expect(mobile.styles.fontSize).toBe("60px");
     expect(mobile.responsive.mobile?.fontSize).toBe("34px");
     expect(mobile.responsive.mobile?.width).toBe("100%");
+  });
+
+  it("conserve la cible d’un upload image quand la sélection change avant le retour", async () => {
+    const image = createElement("image");
+    const other = createElement("heading");
+    const nodes = [image, other];
+    const uploadTargetId = image.id;
+    let selectedId = image.id;
+    const uploadResult = Promise.resolve("https://cdn.example.com/uploaded.png");
+    selectedId = other.id;
+    const updated = applyUploadedImage(nodes, uploadTargetId, await uploadResult);
+    expect(selectedId).toBe(other.id);
+    expect(findNode(updated, image.id)?.props.src).toBe("https://cdn.example.com/uploaded.png");
+    expect(findNode(updated, other.id)?.props.src).toBeUndefined();
+  });
+
+  it("réordonne un calque par glisser-déposer sans créer de cycle", () => {
+    const parent = createElement("section");
+    const first = createElement("heading");
+    const second = createElement("paragraph");
+    parent.children = [first, second];
+    const moved = moveNodeBefore([parent], second.id, first.id);
+    expect(findNode(moved, parent.id)?.children.map((node) => node.id)).toEqual([second.id, first.id]);
+    expect(moveNodeBefore([parent], parent.id, first.id)).toEqual([parent]);
+  });
+
+  it("conserve les styles desktop lorsqu’un override mobile est modifié", () => {
+    const heading = createElement("heading");
+    const updated = patchNodeStyle(heading, { fontSize: "32px", color: "#2925D8" }, "mobile");
+    expect(updated.styles.fontSize).toBe("48px");
+    expect(updated.styles.color).toBe("#11172B");
+    expect(updated.responsive.mobile).toMatchObject({ fontSize: "32px", color: "#2925D8" });
+  });
+
+  it("gère undo, redo et une nouvelle branche après undo", () => {
+    const first = [createElement("heading")];
+    const second = [createElement("paragraph")];
+    const third = [createElement("button")];
+    const initial = { history: [first], index: 0 };
+    const afterSecond = pushHistory(initial.history, initial.index, second);
+    const afterThird = pushHistory(afterSecond.history, afterSecond.index, third);
+    expect(historyUndo(afterThird.history, afterThird.index)?.next).toBe(second);
+    expect(historyRedo(afterThird.history, 1)?.next).toBe(third);
+    const branch = pushHistory(afterThird.history, 1, [createElement("image")]);
+    expect(branch.history).toHaveLength(3);
+    expect(branch.history[2]).not.toBe(third);
   });
 
   it("duplique et réordonne un calque avec un nouvel identifiant", () => {

@@ -1,4 +1,4 @@
-import { type CSSProperties, type PointerEvent, useMemo } from "react";
+import { type CSSProperties, type PointerEvent, useMemo, useState } from "react";
 import type { DeviceMode, ElementNode } from "../../../../shared/siteflow";
 
 type RendererProps = {
@@ -26,14 +26,18 @@ function elementStyles(node: ElementNode, device: DeviceMode): CSSProperties {
     : device === "tablet" && node.type === "heading"
       ? { fontSize: "48px" }
       : {};
-  return { ...node.styles, ...compactDefaults, ...overrides } as CSSProperties;
+  const activeStyles = { ...node.styles, ...overrides };
+  const visualStyles = Object.fromEntries(Object.entries(activeStyles).filter(([key]) => key !== "hoverBackground" && key !== "hoverColor"));
+  return { ...visualStyles, ...compactDefaults } as CSSProperties;
 }
 
 function NodeFrame({ node, device, selectedId, editable, onSelect, onResize, onMove, children }: NodeRendererProps & { node: ElementNode; children: React.ReactNode }) {
   const selected = editable && selectedId === node.id;
   const selectedStyle = selected ? "siteflow-node-selected" : "";
+  const interactive = editable && !node.locked;
 
   function drag(kind: "move" | "resize", event: PointerEvent<HTMLButtonElement>) {
+    if (!interactive) return;
     event.preventDefault();
     event.stopPropagation();
     const startX = event.clientX;
@@ -55,18 +59,19 @@ function NodeFrame({ node, device, selectedId, editable, onSelect, onResize, onM
   return (
     <div
       data-site-node={node.id}
-      className={`siteflow-node relative ${selectedStyle}`}
+      className={`siteflow-node relative ${selectedStyle} ${node.locked ? "siteflow-node-locked" : ""}`}
       onClick={(event) => {
         if (!editable) return;
         event.stopPropagation();
+        if (!interactive) return;
         onSelect?.(node);
       }}
     >
       {children}
       {selected ? (
         <>
-          <div className="siteflow-selection-label"><span>{node.name}</span><button aria-label="Déplacer l’élément" onPointerDown={(event) => drag("move", event)}>↕</button></div>
-          <button className="siteflow-resize-handle" aria-label="Redimensionner l’élément" onPointerDown={(event) => drag("resize", event)} />
+          <div className="siteflow-selection-label"><span>{node.name}{node.locked ? " · verrouillé" : ""}</span>{interactive ? <button aria-label="Déplacer l’élément" onPointerDown={(event) => drag("move", event)}>↕</button> : null}</div>
+          {interactive ? <button className="siteflow-resize-handle" aria-label="Redimensionner l’élément" onPointerDown={(event) => drag("resize", event)} /> : null}
         </>
       ) : null}
     </div>
@@ -76,6 +81,9 @@ function NodeFrame({ node, device, selectedId, editable, onSelect, onResize, onM
 function NodeView(props: NodeRendererProps & { node: ElementNode }) {
   const { node, device = "desktop", selectedId, editable, onSelect, onResize, onMove } = props;
   const style = useMemo(() => elementStyles(node, device), [device, node]);
+  const [hovered, setHovered] = useState(false);
+  const activeStyles = device === "desktop" ? node.styles : { ...node.styles, ...(node.responsive[device] ?? {}) };
+  const hoverStyle = hovered ? { ...(activeStyles.hoverBackground ? { background: String(activeStyles.hoverBackground) } : {}), ...(activeStyles.hoverColor ? { color: String(activeStyles.hoverColor) } : {}) } : {};
   const children = node.children.map((child) => <NodeView key={child.id} {...props} node={child} />);
   if (!node.visible) return null;
   const frame = (content: React.ReactNode) => <NodeFrame {...props}>{content}</NodeFrame>;
@@ -86,7 +94,7 @@ function NodeView(props: NodeRendererProps & { node: ElementNode }) {
     case "container": return frame(<div style={style}>{children}</div>);
     case "heading": return frame(<h2 style={style}>{copy}</h2>);
     case "paragraph": return frame(<p style={style}>{copy}</p>);
-    case "button": return frame(<a href={(node.props.href as string) ?? "#"} onClick={(event) => editable && event.preventDefault()} style={style}>{(node.props.label as string) ?? "Action"}</a>);
+    case "button": return frame(<a href={(node.props.href as string) ?? "#"} onClick={(event) => editable && event.preventDefault()} onPointerEnter={() => setHovered(true)} onPointerLeave={() => setHovered(false)} style={{ ...style, ...hoverStyle }}>{(node.props.label as string) ?? "Action"}</a>);
     case "image": return frame(<img src={(node.props.src as string) ?? ""} alt={(node.props.alt as string) ?? ""} style={style} />);
     case "grid": return frame(<div style={style}>{children}</div>);
     case "card": return frame(<article style={style}><h3 className="mb-3 font-semibold text-[#11172B]">{(node.props.title as string) ?? node.name}</h3><p className="m-0 text-sm leading-6 text-[#62667B]">{(node.props.text as string) ?? ""}</p>{children}</article>);

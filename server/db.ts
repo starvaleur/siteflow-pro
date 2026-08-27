@@ -205,7 +205,7 @@ export async function addAssetForUser(input: { userId: number; userName?: string
   const db = requireDb(await getDb());
   const workspace = await getOrCreateWorkspace(input.userId, input.userName);
   const result = await db.insert(assets).values({ workspaceId: workspace.id, name: input.name.trim(), kind: input.kind, url: input.url, folder: input.folder ?? "Bibliothèque" });
-  return { id: insertId(result) };
+  return { id: insertId(result), url: input.url };
 }
 
 export async function listCollectionsForUser(userId: number, siteId: number) {

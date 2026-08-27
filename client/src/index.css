@@ -197,17 +197,26 @@
   .siteflow-dialog { width:min(100%, 720px); overflow:hidden; border:1px solid rgba(255,255,255,.55); border-radius:1.4rem; background:#fff; box-shadow:0 24px 90px rgba(17,20,70,.25); animation:siteflowEnter 220ms cubic-bezier(.23,1,.32,1); }
   .siteflow-loader { height:28px; width:28px; border:3px solid #E0E0F5; border-top-color:#2925D8; border-radius:999px; animation:spin .7s linear infinite; }
 
-  .siteflow-editor-header { position:sticky; top:0; z-index:40; display:flex; height:68px; align-items:center; justify-content:space-between; gap:1rem; border-bottom:1px solid #DDE0E8; background:#fff; padding:0 1.75rem; }
-  .siteflow-editor-rail { display:flex; width:88px; flex-shrink:0; flex-direction:column; align-items:center; border-right:1px solid #DDE0E8; background:#fff; }
+  .siteflow-editor-header { position:sticky; top:0; z-index:40; display:flex; min-width:0; height:68px; align-items:center; justify-content:space-between; gap:1rem; border-bottom:1px solid #DDE0E8; background:#fff; padding:0 1.75rem; }
+  .siteflow-editor-content { position:relative; display:flex; min-height:calc(100vh - 68px); min-width:0; }
+  .siteflow-mobile-editor-leading { display:none; min-width:0; align-items:center; gap:.65rem; }
+  .siteflow-mobile-editor-leading > span { min-width:0; max-width:42vw; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:.75rem; font-weight:800; }
+  .siteflow-panel-toggle { display:grid; height:32px; width:32px; flex-shrink:0; place-items:center; border-radius:.55rem; color:#5A5E72; transition:background 150ms ease, color 150ms ease, transform 180ms cubic-bezier(.23,1,.32,1); }
+  .siteflow-panel-toggle:hover { background:#F1F1F7; color:#2925D8; }
+  .siteflow-panel-toggle:active { transform:scale(.97); }
+  .siteflow-editor-rail { display:flex; width:88px; flex-shrink:0; flex-direction:column; align-items:center; border-right:1px solid #DDE0E8; background:#fff; transition:width 180ms cubic-bezier(.23,1,.32,1), border-color 180ms ease; }
+  .siteflow-editor-rail.is-collapsed { width:0; overflow:hidden; border-right-color:transparent; pointer-events:none; }
   .siteflow-rail-btn { display:grid; height:46px; width:46px; place-items:center; border-radius:.65rem; color:#43495A; transition:background 160ms ease, color 160ms ease; }
   .siteflow-rail-btn:hover { background:#F3F3F9; color:#2925D8; }
   .siteflow-rail-btn-active { background:#4B42E8; color:#fff; box-shadow:0 8px 16px rgba(41,37,216,.16); }
-  .siteflow-editor-panel { width:340px; flex-shrink:0; border-right:1px solid #DDE0E8; background:#fff; }
-  .siteflow-canvas-wrap { min-width:0; flex:1; overflow:auto; background-color:#F6F7FA; background-image:radial-gradient(#D5D8E4 .8px, transparent .8px); background-size:16px 16px; }
-  .siteflow-canvas-stage { display:flex; min-height:calc(100vh - 68px); justify-content:center; padding:30px 32px 160px; }
-  .siteflow-canvas-zoom { flex-shrink:0; transition:width 180ms cubic-bezier(.23,1,.32,1), transform 180ms cubic-bezier(.23,1,.32,1); }
+  .siteflow-editor-panel { width:340px; flex-shrink:0; overflow:hidden; border-right:1px solid #DDE0E8; background:#fff; transition:width 180ms cubic-bezier(.23,1,.32,1), border-color 180ms ease; }
+  .siteflow-editor-panel.is-collapsed { width:0; border-right-color:transparent; pointer-events:none; }
+  .siteflow-canvas-wrap { min-width:0; min-height:0; flex:1; overflow:auto; overscroll-behavior:contain; background-color:#F6F7FA; background-image:radial-gradient(#D5D8E4 .8px, transparent .8px); background-size:16px 16px; }
+  .siteflow-canvas-stage { display:flex; min-height:100%; min-width:max-content; justify-content:center; padding:30px 32px 160px; }
+  .siteflow-canvas-zoom { flex-shrink:0; transition:transform 180ms cubic-bezier(.23,1,.32,1); }
   .siteflow-document { min-height:720px; overflow:hidden; border:1px solid #D6D9E4; background:#fff; box-shadow:0 10px 24px rgba(19,23,84,.10); }
-  .siteflow-inspector { width:390px; flex-shrink:0; border-left:1px solid #DDE0E8; background:#fff; }
+  .siteflow-inspector { width:390px; flex-shrink:0; overflow:hidden; border-left:1px solid #DDE0E8; background:#fff; transition:width 180ms cubic-bezier(.23,1,.32,1), transform 180ms cubic-bezier(.23,1,.32,1), border-color 180ms ease; }
+  .siteflow-inspector.is-collapsed { width:0; border-left-color:transparent; pointer-events:none; }
   .siteflow-inspector-empty { display:grid; height:100%; place-content:center; padding:2rem; color:#30344E; }
   .siteflow-inspector-empty h3 { text-align:center; }
   .siteflow-icon-btn { display:grid; height:34px; width:34px; place-items:center; border-radius:.55rem; color:#55596F; transition:background 150ms ease, color 150ms ease; }
@@ -229,11 +238,21 @@
   .siteflow-inspector-group-muted { background:#FBFBFD; }
   .siteflow-canvas-toolbar { position:sticky; top:69px; z-index:20; display:flex; gap:.5rem; overflow:auto; border-bottom:1px solid #E2E2EA; background:rgba(255,255,255,.96); padding:.55rem .75rem; backdrop-filter:blur(8px); }
   .siteflow-canvas-toolbar button { display:flex; flex-shrink:0; align-items:center; gap:.35rem; border-radius:.55rem; background:#F3F3F9; padding:.45rem .6rem; font-size:.68rem; font-weight:800; color:#5B5F75; }
+  .siteflow-canvas-utility { position:sticky; top:69px; z-index:20; display:flex; width:max-content; align-items:center; gap:.2rem; margin:12px 12px -46px auto; border:1px solid #E0E1EB; border-radius:.7rem; background:rgba(255,255,255,.95); padding:.2rem; box-shadow:0 7px 18px rgba(20,24,73,.08); backdrop-filter:blur(8px); }
+  .siteflow-canvas-utility > span { min-width:42px; text-align:center; font-size:.68rem; font-weight:800; color:#5B5F75; }
+  .siteflow-canvas-utility .siteflow-icon-btn { height:28px; width:28px; }
+  .siteflow-layer-row { cursor: grab; transition: background-color 160ms ease-out; }
+  .siteflow-layer-row:active { cursor: grabbing; }
+  .siteflow-layer-actions { transition: opacity 160ms ease-out; }
   .siteflow-mobile-properties { position:fixed; z-index:45; bottom:12px; left:12px; right:12px; display:flex; align-items:center; justify-content:space-between; border:1px solid #D5D6E8; border-radius:1rem; background:rgba(255,255,255,.96); padding:.7rem .8rem; box-shadow:0 14px 38px rgba(20,24,73,.17); backdrop-filter:blur(12px); }
   .siteflow-mobile-sheet-backdrop { position:fixed; inset:0; z-index:60; display:flex; align-items:flex-end; background:rgba(17,23,43,.3); }
-  .siteflow-mobile-sheet { width:100%; border-radius:1.25rem 1.25rem 0 0; background:#fff; padding:1rem; box-shadow:0 -18px 45px rgba(17,20,72,.15); animation:siteflowSheetIn 220ms cubic-bezier(.23,1,.32,1); }
+  .siteflow-mobile-sheet { width:100%; max-height:82vh; overflow:hidden; border-radius:1.25rem 1.25rem 0 0; background:#fff; padding:1rem; box-shadow:0 -18px 45px rgba(17,20,72,.15); animation:siteflowSheetIn 220ms cubic-bezier(.23,1,.32,1); }
+  .siteflow-mobile-panel { width:100%; max-height:82vh; overflow:hidden; border-radius:1.25rem 1.25rem 0 0; background:#fff; box-shadow:0 -18px 45px rgba(17,20,72,.15); animation:siteflowSheetIn 220ms cubic-bezier(.23,1,.32,1); }
+  .siteflow-mobile-panel > div { max-height:82vh; }
+  .siteflow-mobile-nav { display:none; }
   .siteflow-node { outline:1px solid transparent; outline-offset:-1px; transition:outline-color 120ms ease, box-shadow 120ms ease; }
-  .siteflow-node-selected { z-index:3; outline:2px solid #2925D8; outline-offset:-2px; box-shadow:inset 0 0 0 2px rgba(41,37,216,.08); }
+  .siteflow-node-selected { outline:2px solid #6B6DE2; outline-offset:3px; }
+  .siteflow-node-locked { cursor:not-allowed; }
   .siteflow-selection-label { position:absolute; z-index:8; top:-25px; left:0; display:flex; align-items:center; gap:.4rem; border-radius:.35rem .35rem 0 0; background:#2925D8; padding:.25rem .4rem; color:#fff; font-family:"Plus Jakarta Sans",sans-serif; font-size:10px; font-weight:800; line-height:1; }
   .siteflow-selection-label button { display:grid; height:14px; width:14px; place-items:center; border-radius:3px; background:rgba(255,255,255,.18); cursor:grab; font-size:10px; }
   .siteflow-resize-handle { position:absolute; right:-5px; bottom:-5px; z-index:8; height:10px; width:10px; border:2px solid #fff; border-radius:50%; background:#2925D8; cursor:nwse-resize; }
@@ -259,15 +278,42 @@
 @keyframes siteflowSheetIn { from { opacity:0; transform:translateY(28px); } to { opacity:1; transform:translateY(0); } }
 @keyframes spin { to { transform:rotate(360deg); } }
 
+@media (max-width: 1100px) and (min-width: 901px) {
+  .siteflow-editor-panel { width:300px; }
+  .siteflow-inspector { position:absolute; top:0; right:0; bottom:0; z-index:50; width:min(360px, calc(100vw - 88px)); box-shadow:-18px 0 42px rgba(17,20,72,.13); }
+  .siteflow-inspector.is-collapsed { width:min(360px, calc(100vw - 88px)); transform:translateX(100%); border-left-color:#DDE0E8; }
+  .siteflow-canvas-stage { padding-left:24px; padding-right:24px; }
+}
+
 @media (max-width: 900px) {
+  .siteflow-editor-header { height:58px; padding:0 .75rem; gap:.5rem; }
+  .siteflow-mobile-editor-leading { display:flex; }
+  .siteflow-editor-header > :first-child > .siteflow-panel-toggle { display:none; }
+  .siteflow-editor-header > :nth-child(2) { display:none; }
+  .siteflow-editor-header > :last-child { gap:.35rem; }
+  .siteflow-editor-header > :last-child > button:first-child { display:grid; height:32px; width:32px; overflow:hidden; padding:0; font-size:0; }
+  .siteflow-editor-header > :last-child > button:first-child::before { content:"↥"; font-size:1rem; }
+  .siteflow-editor-header > :last-child > button:nth-child(2) { min-width:0; width:32px; overflow:hidden; padding:0; font-size:0; justify-content:center; }
+  .siteflow-editor-header > :last-child > button:nth-child(2) svg { margin:0; }
   .siteflow-editor-rail, .siteflow-editor-panel, .siteflow-inspector { display:none; }
-  .siteflow-canvas-toolbar { position:fixed; top:auto; right:0; bottom:0; left:0; z-index:55; height:68px; justify-content:space-around; gap:0; overflow:visible; border-top:1px solid #DCDDE8; border-bottom:0; padding:.35rem .25rem calc(.35rem + env(safe-area-inset-bottom)); box-shadow:0 -8px 26px rgba(17,20,72,.08); }
+  .siteflow-editor-content { min-height:calc(100vh - 58px); }
+  .siteflow-canvas-toolbar { position:fixed; top:auto; right:0; bottom:0; left:0; z-index:55; display:flex; height:68px; justify-content:space-around; gap:0; overflow:visible; border-top:1px solid #DCDDE8; border-bottom:0; padding:.35rem .25rem calc(.35rem + env(safe-area-inset-bottom)); box-shadow:0 -8px 26px rgba(17,20,72,.08); }
   .siteflow-canvas-toolbar button { flex:1; flex-direction:column; justify-content:center; gap:.2rem; background:transparent; padding:.3rem .1rem; font-size:.58rem; }
   .siteflow-canvas-toolbar button:hover { color:#2925D8; }
-  .siteflow-canvas-stage { min-height:calc(100vh - 69px); padding:28px 14px 118px; }
+  .siteflow-canvas-stage { min-height:calc(100vh - 58px); min-width:0; padding:28px 14px 118px; }
   .siteflow-mobile-properties { bottom:82px; }
-  .siteflow-canvas-zoom { max-width:100%; }
+  .siteflow-canvas-zoom { max-width:none; }
   .siteflow-document { min-height:580px; }
+  .siteflow-canvas-utility { position:fixed; top:70px; right:12px; z-index:54; margin:0; }
+  .siteflow-mobile-nav { display:flex; }
+}
+
+@media (hover: none) {
+  .siteflow-layer-actions { opacity:1 !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .siteflow-layer-actions, .siteflow-layer-row { transition:none; }
 }
 
 @media (max-width: 1200px) {

@@ -85,9 +85,48 @@ export function reorderSibling(nodes: ElementNode[], id: string, direction: "up"
   return nodes.map((node) => ({ ...node, children: reorderSibling(node.children, id, direction) }));
 }
 
+export function moveNodeBefore(nodes: ElementNode[], draggedId: string, targetId: string): ElementNode[] {
+  if (draggedId === targetId) return nodes;
+  const dragged = findNode(nodes, draggedId);
+  if (!dragged || findNode(dragged.children, targetId)) return nodes;
+  const withoutDragged = removeNode(nodes, draggedId);
+  let inserted = false;
+  const insert = (items: ElementNode[]): ElementNode[] => {
+    const targetIndex = items.findIndex((node) => node.id === targetId);
+    if (targetIndex !== -1) {
+      inserted = true;
+      return [...items.slice(0, targetIndex), dragged, ...items.slice(targetIndex)];
+    }
+    return items.map((node) => ({ ...node, children: insert(node.children) }));
+  };
+  const result = insert(withoutDragged);
+  return inserted ? result : nodes;
+}
+
 export function patchNodeStyle(node: ElementNode, styles: StyleMap, device: "desktop" | "tablet" | "mobile") {
   if (device === "desktop") return { ...node, styles: { ...node.styles, ...styles } };
   return { ...node, responsive: { ...node.responsive, [device]: { ...node.responsive[device], ...styles } } };
+}
+
+export function patchNodeProp(nodes: ElementNode[], id: string, key: string, value: unknown): ElementNode[] {
+  return updateNode(nodes, id, (node) => ({ ...node, props: { ...node.props, [key]: value } }));
+}
+
+export function applyUploadedImage(nodes: ElementNode[], targetId: string, url: string): ElementNode[] {
+  return patchNodeProp(nodes, targetId, "src", url);
+}
+
+export function pushHistory(history: ElementNode[][], index: number, next: ElementNode[]) {
+  const nextIndex = index + 1;
+  return { history: [...history.slice(0, nextIndex), next], index: nextIndex };
+}
+
+export function historyUndo(history: ElementNode[][], index: number): { next: ElementNode[]; index: number } | null {
+  return index > 0 ? { next: history[index - 1], index: index - 1 } : null;
+}
+
+export function historyRedo(history: ElementNode[][], index: number): { next: ElementNode[]; index: number } | null {
+  return index < history.length - 1 ? { next: history[index + 1], index: index + 1 } : null;
 }
 
 export function flattenTree(nodes: ElementNode[]): ElementNode[] {
