@@ -57,20 +57,26 @@ export type SiteTheme = {
   foreground: string;
   accent: string;
   muted: string;
-  fontDisplay: string;
-  fontBody: string;
-  radius: string;
   primary?: string;
   secondary?: string;
   surface?: string;
-  shadow?: string;
-  spacing?: string;
+  text?: string;
+  fontDisplay: string;
+  fontBody: string;
   fontSmall?: string;
   fontH1?: string;
   fontH2?: string;
   fontH3?: string;
   fontBodySize?: string;
   fontSmallSize?: string;
+  fontButtonSize?: string;
+  radius: string;
+  buttonRadius?: string;
+  cardRadius?: string;
+  borderWidth?: string;
+  shadow?: string;
+  spacing?: string;
+  containerMaxWidth?: string;
 };
 
 export type SiteBlueprint = {
@@ -96,9 +102,26 @@ const indigoTheme: SiteTheme = {
   foreground: "#11172B",
   accent: "#2925D8",
   muted: "#F0F0F6",
+  primary: "#2925D8",
+  secondary: "#11172B",
+  surface: "#FFFFFF",
+  text: "#11172B",
   fontDisplay: "DM Serif Display",
   fontBody: "Plus Jakarta Sans",
+  fontSmall: "Plus Jakarta Sans",
+  fontH1: "DM Serif Display",
+  fontH2: "DM Serif Display",
+  fontH3: "DM Serif Display",
+  fontBodySize: "16px",
+  fontSmallSize: "12px",
+  fontButtonSize: "14px",
   radius: "16px",
+  buttonRadius: "10px",
+  cardRadius: "16px",
+  borderWidth: "1px",
+  shadow: "0 4px 12px rgba(0,0,0,0.05)",
+  spacing: "24px",
+  containerMaxWidth: "1200px",
 };
 
 const buildNode = (
@@ -172,15 +195,15 @@ export const templateCatalog: Array<Pick<SiteBlueprint, "key" | "name" | "catego
 
 const copyByTemplate: Record<string, Omit<SiteBlueprint, "key" | "pages">> = {
   "nexus-saas": { name: "Nexus", category: "SaaS", description: "Une base B2B nette pour un produit ambitieux.", cover: ASSETS.nexus, theme: indigoTheme },
-  "form-agency": { name: "Form", category: "Agence", description: "Un portfolio d’agence qui mène rapidement au contact.", cover: ASSETS.canvas, theme: { ...indigoTheme, accent: "#B84422" } },
-  "canvas-portfolio": { name: "Canvas", category: "Portfolio", description: "Une composition éditoriale pour mettre le travail au premier plan.", cover: ASSETS.canvas, theme: { ...indigoTheme, background: "#F5F0EA", accent: "#A94434" } },
-  "atelier-restaurant": { name: "Atelier", category: "Restaurant", description: "Un univers gastronomique lumineux et réservé.", cover: ASSETS.atelier, theme: { ...indigoTheme, background: "#171717", foreground: "#F5EFE5", accent: "#C88A31", muted: "#252525" } },
-  "arc-estate": { name: "Arc", category: "Immobilier", description: "Des propriétés présentées comme des pièces architecturales.", cover: ASSETS.arc, theme: { ...indigoTheme, background: "#F3F2EC", accent: "#565E40" } },
-  "tempo-fitness": { name: "Tempo", category: "Fitness", description: "Une marque énergique structurée autour des programmes.", cover: ASSETS.nexus, theme: { ...indigoTheme, accent: "#F04A30" } },
-  "lumen-photo": { name: "Lumen", category: "Photographie", description: "Un espace de travail visuel calme, pensé pour l’image.", cover: ASSETS.canvas, theme: { ...indigoTheme, background: "#F3F3F0", foreground: "#171717", accent: "#4B4958" } },
-  "north-consulting": { name: "North", category: "Consulting", description: "Une présence experte, concise et rassurante.", cover: ASSETS.nexus, theme: { ...indigoTheme, accent: "#1F6D65" } },
-  "edition-personal": { name: "Édition", category: "Personnel", description: "Une carte de visite personnelle avec une vraie perspective.", cover: ASSETS.canvas, theme: { ...indigoTheme, accent: "#252525" } },
-  "mercato-shop": { name: "Mercato", category: "Ecommerce", description: "Une vitrine produit éditoriale et orientée conversion.", cover: ASSETS.arc, theme: { ...indigoTheme, accent: "#AA303B" } },
+  "form-agency": { name: "Form", category: "Agence", description: "Un portfolio d’agence qui mène rapidement au contact.", cover: ASSETS.canvas, theme: { ...indigoTheme, accent: "#B84422", primary: "#B84422" } },
+  "canvas-portfolio": { name: "Canvas", category: "Portfolio", description: "Une composition éditoriale pour mettre le travail au premier plan.", cover: ASSETS.canvas, theme: { ...indigoTheme, background: "#F5F0EA", accent: "#A94434", primary: "#A94434" } },
+  "atelier-restaurant": { name: "Atelier", category: "Restaurant", description: "Un univers gastronomique lumineux et réservé.", cover: ASSETS.atelier, theme: { ...indigoTheme, background: "#171717", foreground: "#F5EFE5", accent: "#C88A31", muted: "#252525", primary: "#C88A31", surface: "#1A1A1A", text: "#F5EFE5" } },
+  "arc-estate": { name: "Arc", category: "Immobilier", description: "Des propriétés présentées comme des pièces architecturales.", cover: ASSETS.arc, theme: { ...indigoTheme, background: "#F3F2EC", accent: "#565E40", primary: "#565E40" } },
+  "tempo-fitness": { name: "Tempo", category: "Fitness", description: "Une marque énergique structurée autour des programmes.", cover: ASSETS.nexus, theme: { ...indigoTheme, accent: "#F04A30", primary: "#F04A30" } },
+  "lumen-photo": { name: "Lumen", category: "Photographie", description: "Un espace de travail visuel calme, pensé pour l’image.", cover: ASSETS.canvas, theme: { ...indigoTheme, background: "#F3F3F0", foreground: "#171717", accent: "#4B4958", primary: "#4B4958", text: "#171717" } },
+  "north-consulting": { name: "North", category: "Consulting", description: "Une présence experte, concise et rassurante.", cover: ASSETS.nexus, theme: { ...indigoTheme, accent: "#1F6D65", primary: "#1F6D65" } },
+  "edition-personal": { name: "Édition", category: "Personnel", description: "Une carte de visite personnelle avec une vraie perspective.", cover: ASSETS.canvas, theme: { ...indigoTheme, accent: "#252525", primary: "#252525" } },
+  "mercato-shop": { name: "Mercato", category: "Ecommerce", description: "Une vitrine produit éditoriale et orientée conversion.", cover: ASSETS.arc, theme: { ...indigoTheme, accent: "#AA303B", primary: "#AA303B" } },
 };
 
 function templateContent(key: string) {

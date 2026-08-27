@@ -22,6 +22,12 @@ const theme: SiteTheme = {
   fontH3: "34px",
   fontBodySize: "18px",
   fontSmallSize: "12px",
+  fontButtonSize: "15px",
+  buttonRadius: "12px",
+  cardRadius: "20px",
+  borderWidth: "2px",
+  containerMaxWidth: "1100px",
+  text: "#FAFAFA",
 };
 
 describe("renderer theme mapping", () => {
@@ -49,9 +55,11 @@ describe("renderer theme mapping", () => {
   });
 
   it("applies UI radius, shadow, and spacing tokens across supported families", () => {
-    expect(themedElementStyles(createElement("card"), "desktop", theme)).toMatchObject({ borderRadius: theme.radius, boxShadow: theme.shadow });
+    expect(themedElementStyles(createElement("card"), "desktop", theme)).toMatchObject({ borderRadius: theme.cardRadius, boxShadow: theme.shadow, borderWidth: theme.borderWidth });
     expect(themedElementStyles(createElement("form"), "desktop", theme).borderRadius).toBe(theme.radius);
     expect(themedElementStyles(createElement("image"), "desktop", theme)).toMatchObject({ borderRadius: theme.radius, boxShadow: theme.shadow });
+    expect(themedElementStyles(createElement("button"), "desktop", theme)).toMatchObject({ borderRadius: theme.buttonRadius, fontSize: theme.fontButtonSize });
+    expect(themedElementStyles(createElement("container"), "desktop", theme).maxWidth).toBe(theme.containerMaxWidth);
     expect(themedElementStyles(createElement("grid"), "desktop", theme).gap).toBe(theme.spacing);
     expect(themedElementStyles(createElement("columns"), "desktop", theme).gap).toBe(theme.spacing);
     expect(themedElementStyles(createElement("stack"), "desktop", theme).gap).toBe(theme.spacing);

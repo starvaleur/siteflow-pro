@@ -97,66 +97,119 @@ export function themedElementStyles(node: ElementNode, device: DeviceMode, theme
   const level = Math.max(1, Math.min(3, Number(node.props.level ?? 2)));
   const primary = theme?.primary ?? theme?.accent ?? "#2925D8";
   const secondary = theme?.secondary ?? theme?.muted ?? "#F0F0F6";
-  const surface = theme?.surface ?? "#ffffff";
-  return {
-    ...baseStyle,
-    ...(theme && ["button", "card", "image", "form"].includes(node.type) && !has("borderRadius") ? { borderRadius: theme.radius } : {}),
-    ...(theme && ["card", "form", "navbar"].includes(node.type) && !has("background") ? { background: surface } : {}),
-    ...(theme && node.type === "section" && !has("background") ? { background: secondary } : {}),
-    ...(theme && node.type === "button" && !has("background") ? { background: primary } : {}),
-    ...(theme && node.type === "link" && !has("color") ? { color: theme.accent ?? primary } : {}),
-    ...(theme && ["card", "image"].includes(node.type) && theme.shadow && !has("boxShadow") ? { boxShadow: theme.shadow } : {}),
-    ...(theme && node.type === "heading" ? { fontFamily: theme.fontDisplay, ...(has("fontSize") ? {} : { fontSize: level === 1 ? theme.fontH1 ?? baseStyle.fontSize : level === 3 ? theme.fontH3 ?? baseStyle.fontSize : theme.fontH2 ?? baseStyle.fontSize }) } : {}),
-    ...(theme && ["paragraph", "navbar", "footer", "form", "link"].includes(node.type) ? { fontFamily: theme.fontBody, ...(has("fontSize") ? {} : { fontSize: node.type === "footer" || node.type === "link" ? theme.fontSmallSize ?? baseStyle.fontSize : theme.fontBodySize ?? baseStyle.fontSize }) } : {}),
-    ...(theme && ["grid", "columns", "stack"].includes(node.type) && !has("gap") ? { gap: theme.spacing ?? baseStyle.gap } : {}),
-  } as CSSProperties;
+  const surface = theme?.surface ?? "#FFFFFF";
+  const text = theme?.text ?? theme?.foreground ?? "#11172B";
+  const res: CSSProperties = { ...baseStyle };
+
+  if (theme) {
+    if (!has("borderRadius")) {
+      if (node.type === "button") res.borderRadius = theme.buttonRadius ?? theme.radius;
+      else if (node.type === "card") res.borderRadius = theme.cardRadius ?? theme.radius;
+      else if (["image", "form"].includes(node.type)) res.borderRadius = theme.radius;
+    }
+    if (!has("borderWidth")) res.borderWidth = theme.borderWidth ?? "1px";
+    if (!has("background")) {
+      if (["card", "form", "navbar"].includes(node.type)) res.background = surface;
+      else if (node.type === "section") res.background = secondary;
+      else if (node.type === "button") res.background = primary;
+    }
+    if (!has("color")) {
+      if (node.type === "link") res.color = theme.accent;
+      else res.color = text;
+    }
+    if (!has("boxShadow") && ["card", "image", "form"].includes(node.type)) res.boxShadow = theme.shadow ?? "none";
+    
+    if (node.type === "heading") {
+      res.fontFamily = theme.fontDisplay;
+      if (!has("fontSize")) {
+        res.fontSize = level === 1 ? theme.fontH1 ?? "60px" : level === 3 ? theme.fontH3 ?? "30px" : theme.fontH2 ?? "48px";
+      }
+    } else if (["paragraph", "navbar", "footer", "form", "link"].includes(node.type)) {
+      res.fontFamily = theme.fontBody;
+      if (!has("fontSize")) {
+        if (node.type === "footer" || node.type === "link") res.fontSize = theme.fontSmallSize ?? "12px";
+        else res.fontSize = theme.fontBodySize ?? "16px";
+      }
+    } else if (node.type === "button") {
+      res.fontFamily = theme.fontBody;
+      if (!has("fontSize")) res.fontSize = theme.fontButtonSize ?? "14px";
+    }
+
+    if (!has("gap") && ["grid", "columns", "stack"].includes(node.type)) res.gap = theme.spacing ?? "16px";
+    if (!has("maxWidth") && node.type === "container") res.maxWidth = theme.containerMaxWidth ?? "1200px";
+  }
+
+  return res;
 }
 
 function NodeView(props: NodeRendererProps & { node: ElementNode }) {
   const { node, device = "desktop", selectedId, editable, onSelect, onResize, onMove, theme } = props;
-  const themePrimary = theme?.primary ?? theme?.accent ?? "#2925D8";
-  const themeAccent = theme?.accent ?? themePrimary;
-  const themeForeground = theme?.foreground ?? "#11172B";
+  const themeAccent = theme?.accent ?? "#2925D8";
+  const themeText = theme?.text ?? "#11172B";
   const HeadingTag = headingTagForNode(node);
   const style = useMemo(() => themedElementStyles(node, device, theme), [device, node, theme]);
   const [hovered, setHovered] = useState(false);
   const activeStyles = device === "desktop" ? node.styles : { ...node.styles, ...(node.responsive[device] ?? {}) };
   const hoverStyle = hovered ? { ...(activeStyles.hoverBackground ? { background: String(activeStyles.hoverBackground) } : {}), ...(activeStyles.hoverColor ? { color: String(activeStyles.hoverColor) } : {}) } : {};
   const children = node.children.map((child) => <NodeView key={child.id} {...props} node={child} />);
+  
+  const animType = String(node.props.animationType ?? "none");
+  const animDuration = Number(node.props.animationDuration ?? 400);
+  const animDelay = Number(node.props.animationDelay ?? 0);
+  const animClass = animType !== "none" ? `siteflow-animate siteflow-animate-${animType}` : "";
+  const animStyle = animType !== "none" ? { "--siteflow-anim-duration": `${animDuration}ms`, "--siteflow-anim-delay": `${animDelay}ms` } as CSSProperties : {};
+
   if (!node.visible) return null;
   const frame = (content: React.ReactNode) => <NodeFrame {...props}>{content}</NodeFrame>;
   const copy = (node.props.text as string) ?? "";
+  const wrapLink = (content: React.ReactNode, href?: string) => href ? <a href={href} onClick={(event) => editable && event.preventDefault()} className="block">{content}</a> : content;
 
-  switch (node.type) {
-    case "section": return frame(<section style={style}>{children}</section>);
-    case "container": return frame(<div style={style}>{children}</div>);
-    case "heading": return frame(<HeadingTag style={style}>{copy}</HeadingTag>);
-    case "paragraph": return frame(<p style={style}>{copy}</p>);
-    case "button": return frame(<a href={(node.props.href as string) ?? "#"} onClick={(event) => editable && event.preventDefault()} onPointerEnter={() => setHovered(true)} onPointerLeave={() => setHovered(false)} style={{ ...style, ...hoverStyle }}>{(node.props.label as string) ?? "Action"}</a>);
-    case "image": return frame(<img src={(node.props.src as string) ?? ""} alt={(node.props.alt as string) ?? ""} style={style} />);
-    case "grid": return frame(<div style={style}>{children}</div>);
-    case "card": return frame(<article style={style}><h3 className="mb-3 font-semibold" style={{ color: themeForeground }}>{(node.props.title as string) ?? node.name}</h3><p className="m-0 text-sm leading-6 text-[#62667B]">{(node.props.text as string) ?? ""}</p>{children}</article>);
-    case "navbar": return frame(<nav style={style} className="flex items-center justify-between gap-6"><span className="font-display text-2xl font-normal" style={{ color: themeAccent }}>{(node.props.brand as string) ?? "Marque"}</span><div className="flex items-center gap-5 text-sm font-semibold text-[#51556A]">{((node.props.links as string[]) ?? []).map((link) => <span key={link}>{link}</span>)}</div></nav>);
-    case "footer": return frame(<footer style={style}>{(node.props.text as string) ?? ""}{children}</footer>);
-    case "form": return frame(<form style={style} onSubmit={(event) => event.preventDefault()}><h3 className="mb-2 font-display text-3xl text-[#11172B]">{(node.props.title as string) ?? "Restons en contact"}</h3><input aria-label="Email" className="mb-3 w-full rounded-lg border border-[#DCDCE7] px-3 py-3 text-sm" placeholder="Votre email" /><textarea aria-label="Message" className="mb-3 min-h-24 w-full rounded-lg border border-[#DCDCE7] px-3 py-3 text-sm" placeholder="Votre message" /><button className="rounded-lg bg-[#2925D8] px-4 py-3 text-sm font-bold text-white">{(node.props.button as string) ?? "Envoyer"}</button></form>);
-    case "divider": return frame(<div style={style} />);
-    case "spacer": return frame(<div aria-hidden="true" style={style} />);
-    case "icon": return frame(<span role="img" aria-label={(node.props.label as string) ?? "Icône"} style={style}>{(node.props.symbol as string) ?? "✦"}</span>);
-    case "video": return frame(node.props.src ? <video controls={node.props.controls !== false} poster={(node.props.poster as string) || undefined} style={style}><source src={String(node.props.src)} /></video> : <div style={{ ...style, display: "grid", placeItems: "center", minHeight: "180px", background: "#EDEDF4", color: "#74778C" }}>Ajoutez une source vidéo</div>);
-    case "link": return frame(<a href={(node.props.href as string) ?? "#"} onClick={(event) => editable && event.preventDefault()} style={{ ...style, color: themeAccent }}>{(node.props.label as string) ?? "En savoir plus"}</a>);
-    case "columns": return frame(<div style={style}>{children}</div>);
-    case "stack": return frame(<div style={style}>{children}</div>);
-    default: return frame(<div style={style}>{children}</div>);
-  }
+  const nodeContent = (() => {
+    switch (node.type) {
+      case "section": return <section style={style}>{children}</section>;
+      case "container": return <div style={style}>{children}</div>;
+      case "heading": return wrapLink(<HeadingTag style={style}>{copy}</HeadingTag>, node.props.href as string);
+      case "paragraph": return wrapLink(<p style={style}>{copy}</p>, node.props.href as string);
+      case "button": {
+        const size = String(node.props.size ?? "md");
+        const sizeStyle = size === "sm" ? { padding: "8px 14px", fontSize: "12px" } : size === "lg" ? { padding: "18px 28px", fontSize: "18px" } : {};
+        return <a href={(node.props.href as string) ?? "#"} onClick={(event) => editable && event.preventDefault()} onPointerEnter={() => setHovered(true)} onPointerLeave={() => setHovered(false)} style={{ ...style, ...sizeStyle, ...hoverStyle }}>{typeof node.props.icon === "string" && node.props.icon && <span className="mr-2">{node.props.icon}</span>}{(node.props.label as string) ?? "Action"}</a>;
+      }
+      case "image": return wrapLink(<img src={(node.props.src as string) ?? ""} alt={(node.props.alt as string) ?? ""} style={style} />, node.props.href as string);
+      case "grid": return <div style={style}>{children}</div>;
+      case "card": return <article style={style}><h3 className="mb-3 font-semibold" style={{ color: themeText }}>{(node.props.title as string) ?? node.name}</h3><p className="m-0 text-sm leading-6 text-[#62667B]">{(node.props.text as string) ?? ""}</p>{children}</article>;
+      case "navbar": return <nav style={style} className="flex items-center justify-between gap-6"><span className="font-display text-2xl font-normal" style={{ color: themeAccent }}>{(node.props.brand as string) ?? "Marque"}</span><div className="flex items-center gap-5 text-sm font-semibold text-[#51556A]">{((node.props.links as string[]) ?? []).map((link) => <span key={link}>{link}</span>)}</div></nav>;
+      case "footer": return <footer style={style}>{(node.props.text as string) ?? ""}{children}</footer>;
+      case "form": return <form style={style} onSubmit={(event) => event.preventDefault()}><h3 className="mb-2 font-display text-3xl text-[#11172B]">{(node.props.title as string) ?? "Restons en contact"}</h3><input aria-label="Email" className="mb-3 w-full rounded-lg border border-[#DCDCE7] px-3 py-3 text-sm" placeholder="Votre email" /><textarea aria-label="Message" className="mb-3 min-h-24 w-full rounded-lg border border-[#DCDCE7] px-3 py-3 text-sm" placeholder="Votre message" /><button className="rounded-lg bg-[#2925D8] px-4 py-3 text-sm font-bold text-white">{(node.props.button as string) ?? "Envoyer"}</button></form>;
+      case "divider": return <div style={style} />;
+      case "spacer": return <div aria-hidden="true" style={style} />;
+      case "icon": return <span role="img" aria-label={(node.props.label as string) ?? "Icône"} style={style}>{(node.props.symbol as string) ?? "✦"}</span>;
+      case "video": return node.props.src ? <video controls={node.props.controls !== false} poster={(node.props.poster as string) || undefined} style={style}><source src={String(node.props.src)} /></video> : <div style={{ ...style, display: "grid", placeItems: "center", minHeight: "180px", background: "#EDEDF4", color: "#74778C" }}>Ajoutez une source vidéo</div>;
+      case "link": return <a href={(node.props.href as string) ?? "#"} onClick={(event) => editable && event.preventDefault()} style={{ ...style, color: themeAccent }}>{(node.props.label as string) ?? "En savoir plus"}</a>;
+      case "columns": return <div style={style}>{children}</div>;
+      case "stack": return <div style={style}>{children}</div>;
+      default: return <div style={style}>{children}</div>;
+    }
+  })();
+
+  return frame(<div className={animClass} style={animStyle}>{nodeContent}</div>);
 }
 
 export function SiteRenderer({ nodes, theme, ...props }: RendererProps) {
   const rootStyle = theme ? {
-    "--siteflow-primary": theme.primary ?? theme.accent,
-    "--siteflow-secondary": theme.secondary ?? theme.accent,
-    "--siteflow-surface": theme.surface ?? "#ffffff",
-    "--siteflow-shadow": theme.shadow ?? "0 16px 70px rgba(17,20,72,.16)",
-    "--siteflow-space": theme.spacing ?? "16px",
+    "--siteflow-primary": theme.primary,
+    "--siteflow-secondary": theme.secondary,
+    "--siteflow-surface": theme.surface,
+    "--siteflow-background": theme.background,
+    "--siteflow-text": theme.text,
+    "--siteflow-accent": theme.accent,
+    "--siteflow-muted": theme.muted,
+    "--siteflow-shadow": theme.shadow,
+    "--siteflow-space": theme.spacing,
+    "--siteflow-radius": theme.radius,
+    "--siteflow-button-radius": theme.buttonRadius,
+    "--siteflow-card-radius": theme.cardRadius,
+    "--siteflow-border-width": theme.borderWidth,
     fontFamily: theme.fontBody,
   } as React.CSSProperties : undefined;
   return <div className="siteflow-renderer-root" style={rootStyle}>{nodes.map((node) => <NodeView key={node.id} {...props} theme={theme} node={node} />)}</div>;

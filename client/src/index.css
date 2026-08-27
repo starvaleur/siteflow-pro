@@ -161,6 +161,27 @@
     min-width: 0;
   }
 
+  .bg-dot-grid {
+    background-image: radial-gradient(#D5D8E4 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
+  .siteflow-animate {
+    animation-fill-mode: both;
+    animation-duration: var(--siteflow-anim-duration, 400ms);
+    animation-delay: var(--siteflow-anim-delay, 0ms);
+  }
+
+  .siteflow-animate-fade { animation-name: siteflowFade; }
+  .siteflow-animate-slide-up { animation-name: siteflowSlideUp; }
+  .siteflow-animate-slide-down { animation-name: siteflowSlideDown; }
+  .siteflow-animate-scale { animation-name: siteflowScale; }
+
+  @keyframes siteflowFade { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes siteflowSlideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes siteflowSlideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes siteflowScale { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+
   @media (min-width: 640px) {
     .container {
       padding-left: 1.5rem; /* 24px - tablet padding */

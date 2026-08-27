@@ -67,3 +67,11 @@
 - [x] Verify the live hosted domain loads the public SiteFlow Pro experience
 - [x] Document authenticated live-editor verification requirement; the hosted domain is reachable, but no authenticated session or published site was available for this task
 - [x] Document any authentication requirement or domain limitation that prevents live end-to-end verification
+
+## Remaining Prompt Gaps (Priority Audit)
+- [x] **Inspector Gaps**: Added Image crop/fit/position/link controls, Button icon/size/link/hover behavior, Text link/letter-spacing controls, and Section columns/animation controls
+- [x] **Theme Gaps**: Added Muted color, button typography, border width, card radius, and container max width controls with legacy-theme fallbacks
+- [x] **Animation Tab**: Implemented the Animation tab in both desktop and mobile inspectors with fade, slide, and scale presets plus duration/delay controls
+- [x] **Route Visibility**: Preserved `/` as the dashboard, kept `/editor/:id`, `/preview/:id`, and `/s/:slug` separated, and added a visible dashboard parcours guide explaining each route
+- [x] **Full Journey Regression**: Expanded the deterministic non-browser journey test to add every supported element type, edit, reorder, responsive override, duplicate/delete, history, save transitions, and renderer parity; browser reload and authenticated publish remain manual verification steps
+- [x] **Element Library Semantics**: Gallery, FAQ, Testimonials, and Pricing insert real editable tree nodes; testimonial blocks use explicit non-fabricated placeholders until authentic content is supplied
