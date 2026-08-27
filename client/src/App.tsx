@@ -12,12 +12,14 @@ import Resources from "./pages/Resources";
 import SitePreview from "./pages/SitePreview";
 import TemplatePreview from "./pages/TemplatePreview";
 import Templates from "./pages/Templates";
+import Home from "./pages/Home";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
-      <Route path={"/"} component={Dashboard} />
+      <Route path={"/"} component={Home} />
+      <Route path={"/dashboard"} component={Dashboard} />
       <Route path={"/templates"} component={Templates} />
       <Route path={"/templates/:key"} component={TemplatePreview} />
       <Route path={"/analytics"} component={Analytics} />

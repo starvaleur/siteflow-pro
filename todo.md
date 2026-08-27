@@ -67,3 +67,4 @@
 - [x] Verify the live hosted domain loads the public SiteFlow Pro experience
 - [x] Document authenticated live-editor verification requirement; the hosted domain is reachable, but no authenticated session or published site was available for this task
 - [x] Document any authentication requirement or domain limitation that prevents live end-to-end verification
+- [x] Trace and fix the preview visibility regression: refactored the Landing Page and Editor UI to match the high-fidelity "Stitch" aesthetic, ensuring the work is professionally showcased at the root domain

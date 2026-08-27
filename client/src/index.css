@@ -161,6 +161,11 @@
     min-width: 0;
   }
 
+  .bg-dot-grid {
+    background-image: radial-gradient(#D5D8E4 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
   @media (min-width: 640px) {
     .container {
       padding-left: 1.5rem; /* 24px - tablet padding */

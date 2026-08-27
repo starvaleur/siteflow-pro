@@ -215,16 +215,129 @@ export default function Editor() {
   }
 
   return <div className="siteflow-editor min-h-screen bg-[#F6F6FA] text-[#11172B]">
-    <header className="siteflow-editor-header">
-      <div className="flex min-w-0 items-center gap-5"><div className="siteflow-mobile-editor-leading"><button className="siteflow-panel-toggle" onClick={() => setLocation("/")} aria-label="Retour aux sites"><ChevronLeft className="h-4 w-4" /></button><SiteFlowLogo compact /><span>{site.name}</span></div><button className="siteflow-panel-toggle hidden md:grid" onClick={() => setLeftPanelOpen((value) => !value)} aria-label={leftPanelOpen ? "Réduire le panneau de gauche" : "Afficher le panneau de gauche"} aria-expanded={leftPanelOpen}><PanelLeftClose className="h-4 w-4" /></button><RouterLink href="/" className="hidden xl:block"><SiteFlowLogo /></RouterLink><div className="hidden h-7 border-l border-[#DDDDE8] xl:block" /><div className="min-w-0"><div className="flex items-center gap-2"><button onClick={() => openPanel("settings")} className="truncate text-sm font-extrabold hover:text-[#2925D8]">{site.name}</button><ChevronDown className="h-3.5 w-3.5 text-[#777A8E]" /></div><span className={"mt-0.5 block text-[11px] font-semibold " + (saveStatus === "saved" ? "text-[#488261]" : saveStatus === "saving" ? "text-[#887132]" : "text-[#AB5560]")}>{saveStatus === "saved" ? "Enregistré à l’instant" : saveStatus === "saving" ? "Sauvegarde…" : "Modifications à enregistrer"}</span></div></div>
-      <div className="siteflow-editor-mode-controls hidden items-center gap-1 md:flex"><button className="siteflow-icon-btn" onClick={undo} disabled={historyIndex <= 0} aria-label="Annuler"><Undo2 className="h-4 w-4" /></button><button className="siteflow-icon-btn" onClick={redo} disabled={historyIndex >= history.length - 1} aria-label="Rétablir"><Redo2 className="h-4 w-4" /></button><span className="mx-2 h-5 border-l border-[#E0E0EB]" />{(["desktop", "tablet", "mobile"] as DeviceMode[]).map((item) => { const Icon = deviceIcon(item); return <button key={item} onClick={() => setDevice(item)} className={"siteflow-icon-btn " + (device === item ? "siteflow-icon-btn-active" : "")} aria-label={"Passer en vue " + item}><Icon className="h-4 w-4" /></button> })}<span className="mx-2 h-5 border-l border-[#E0E0EB]" /><button onClick={fitCanvas} className="flex items-center gap-1 rounded-lg px-2 py-2 text-xs font-bold hover:bg-[#F0F0F5]" aria-label="Ajuster le canevas">{zoom}%<ChevronDown className="h-3.5 w-3.5" /></button><button onClick={zoomOut} className="siteflow-icon-btn" aria-label="Réduire le zoom">−</button><button onClick={zoomIn} className="siteflow-icon-btn" aria-label="Augmenter le zoom">+</button></div>
-      <div className="flex items-center gap-2"><button className="siteflow-panel-toggle siteflow-inspector-toggle hidden md:grid" onClick={() => setInspectorOpen((value) => !value)} aria-label={inspectorOpen ? "Réduire l’inspecteur" : "Afficher l’inspecteur"} aria-expanded={inspectorOpen}><PanelLeftClose className="h-4 w-4 rotate-180" /></button><button onClick={saveNow} className="hidden rounded-lg px-3 py-2 text-xs font-bold text-[#555970] hover:bg-[#EFEFF5] sm:block">Sauvegarder</button><button onClick={() => setLocation("/preview/" + siteId)} className="siteflow-secondary-btn !px-3 !py-2 text-xs"><Eye className="h-3.5 w-3.5" />Aperçu</button><button onClick={() => setPublishOpen(true)} className="siteflow-primary-btn !px-3 !py-2 text-xs"><Rocket className="h-3.5 w-3.5" />Publier</button></div>
+    <header className="siteflow-editor-header border-b-0 bg-[#F6F6FA]/80 backdrop-blur-md">
+      <div className="flex min-w-0 items-center gap-4">
+        <div className="siteflow-mobile-editor-leading">
+          <button className="siteflow-panel-toggle" onClick={() => setLocation("/dashboard")} aria-label="Retour au dashboard"><ChevronLeft className="h-4 w-4" /></button>
+          <SiteFlowLogo compact />
+          <span>{site.name}</span>
+        </div>
+        <button className="siteflow-panel-toggle hidden md:grid" onClick={() => setLeftPanelOpen((value) => !value)} aria-label={leftPanelOpen ? "Réduire" : "Ouvrir"} aria-expanded={leftPanelOpen}>
+          <LayoutPanelLeft className="h-4 w-4" />
+        </button>
+        <RouterLink href="/dashboard" className="hidden xl:block">
+          <div className="bg-white p-1.5 rounded-lg border border-[#E5E5EF] shadow-sm hover:shadow-md transition-all">
+            <SiteFlowLogo compact />
+          </div>
+        </RouterLink>
+        <div className="min-w-0">
+          <div className="flex items-center gap-2">
+            <button onClick={() => openPanel("settings")} className="truncate text-sm font-extrabold text-[#11172B] hover:text-[#2925D8] transition-colors">{site.name}</button>
+            <div className={`h-1.5 w-1.5 rounded-full ${saveStatus === "saved" ? "bg-[#488261]" : "bg-[#F59E0B] animate-pulse"}`} />
+          </div>
+          <span className={"mt-0.5 block text-[10px] font-bold uppercase tracking-wider " + (saveStatus === "saved" ? "text-[#488261]" : "text-[#F59E0B]")}>
+            {saveStatus === "saved" ? "Enregistré" : saveStatus === "saving" ? "Sauvegarde..." : "Modifié"}
+          </span>
+        </div>
+      </div>
+
+      {/* Centered Device Switcher (Stitch Style) */}
+      <div className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-1 rounded-2xl border border-[#E5E5EF] bg-white p-1 shadow-[0_8px_30px_rgba(0,0,0,0.04)] md:flex">
+        {(["desktop", "tablet", "mobile"] as DeviceMode[]).map((item) => {
+          const Icon = deviceIcon(item);
+          return (
+            <button 
+              key={item} 
+              onClick={() => setDevice(item)} 
+              className={`flex h-9 w-12 items-center justify-center rounded-xl transition-all ${device === item ? "bg-[#F0F0FF] text-[#2925D8] shadow-inner" : "text-[#717487] hover:bg-[#F8F8FC]"}`}
+              aria-label={"Vue " + item}
+            >
+              <Icon className="h-4 w-4" />
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="flex items-center gap-2">
+        <div className="mr-2 hidden items-center gap-1 rounded-xl border border-[#E5E5EF] bg-white p-1 md:flex">
+          <button className="siteflow-icon-btn !h-8 !w-8" onClick={undo} disabled={historyIndex <= 0} aria-label="Annuler"><Undo2 className="h-3.5 w-3.5" /></button>
+          <button className="siteflow-icon-btn !h-8 !w-8" onClick={redo} disabled={historyIndex >= history.length - 1} aria-label="Rétablir"><Redo2 className="h-3.5 w-3.5" /></button>
+        </div>
+        
+        <div className="mr-2 hidden items-center gap-1 rounded-xl border border-[#E5E5EF] bg-white p-1 sm:flex">
+          <button onClick={zoomOut} className="siteflow-icon-btn !h-8 !w-8" aria-label="Zoom arrière">−</button>
+          <button onClick={fitCanvas} className="px-2 text-[11px] font-bold text-[#555970] hover:text-[#2925D8]">{zoom}%</button>
+          <button onClick={zoomIn} className="siteflow-icon-btn !h-8 !w-8" aria-label="Zoom avant">+</button>
+        </div>
+
+        <button onClick={() => setLocation("/preview/" + siteId)} className="siteflow-secondary-btn !h-10 !px-4 !py-0 text-xs font-bold">
+          <Eye className="h-3.5 w-3.5" /> <span className="hidden lg:inline">Aperçu</span>
+        </button>
+        <button onClick={() => setPublishOpen(true)} className="siteflow-primary-btn !h-10 !px-4 !py-0 text-xs font-bold shadow-lg shadow-[#2925D8]/20">
+          <Rocket className="h-3.5 w-3.5" /> <span className="hidden lg:inline">Publier</span>
+        </button>
+        
+        <button className="siteflow-panel-toggle siteflow-inspector-toggle ml-2 hidden md:grid" onClick={() => setInspectorOpen((value) => !value)} aria-label={inspectorOpen ? "Fermer" : "Ouvrir"} aria-expanded={inspectorOpen}>
+          <Settings2 className="h-4 w-4" />
+        </button>
+      </div>
     </header>
     <div className="siteflow-editor-content flex min-h-[calc(100vh-69px)]">
-      <aside className={"siteflow-editor-rail " + (leftPanelOpen ? "" : "is-collapsed")} aria-label="Outils de création"><div className="flex flex-1 flex-col gap-3 py-4">{toolGroups.map((group) => <div key={group.label} className="space-y-1">{group.items.map((item) => <button key={item.panel} onClick={() => openPanel(item.panel)} className={"siteflow-rail-btn " + (activePanel === item.panel ? "siteflow-rail-btn-active" : "")} title={item.title} aria-label={item.title}><item.icon className="h-[19px] w-[19px]" /></button>)}</div>)}</div><button className="siteflow-rail-btn mb-4" title="Aide" aria-label="Aide"><CircleHelp className="h-5 w-5" /></button></aside>
-      <aside className={"siteflow-editor-panel " + (leftPanelOpen ? "" : "is-collapsed")} aria-label="Panneau de travail">{!isEditorNarrow ? renderPanelContent() : null}</aside>
-      <main ref={canvasWrapRef} className="siteflow-canvas-wrap"><div className="siteflow-canvas-utility"><button onClick={zoomOut} className="siteflow-icon-btn" aria-label="Réduire le zoom">−</button><span aria-live="polite">{zoom}%</span><button onClick={zoomIn} className="siteflow-icon-btn" aria-label="Augmenter le zoom">+</button><button onClick={fitCanvas} className="siteflow-icon-btn" aria-label="Ajuster le canevas"><Maximize2 className="h-4 w-4" /></button></div><div className="siteflow-canvas-toolbar siteflow-mobile-nav lg:hidden"><button onClick={() => openPanel("add")}><Plus className="h-4 w-4" />Ajouter</button><button onClick={() => openPanel("pages")}><FileText className="h-4 w-4" />Pages</button><button onClick={() => openPanel("layers")}><Layers3 className="h-4 w-4" />Calques</button><button onClick={() => openPanel("theme")}><Palette className="h-4 w-4" />Design</button><button onClick={() => openPanel("assets")}><Image className="h-4 w-4" />Assets</button><button onClick={() => openPanel("settings")}><MoreHorizontal className="h-4 w-4" />Plus</button></div><div className="siteflow-canvas-stage"><div className="siteflow-canvas-zoom" style={{ width: canvasWidth, zoom: zoom / 100 }}><div className="siteflow-document" onClick={() => setSelectedId(null)}><SiteRenderer nodes={tree} theme={site.theme} device={device} editable selectedId={selectedId} onSelect={selectNode} onResize={(node, width) => updateSelectedNode((item) => item.id === node.id ? patchNodeStyle(item, { width: width + "px" }, device) : item)} onMove={(node, delta) => updateSelectedNode((item) => item.id === node.id ? patchNodeStyle(item, { marginLeft: ((parseInt(String(item.styles.marginLeft ?? 0), 10) || 0) + delta.x) + "px", marginTop: ((parseInt(String(item.styles.marginTop ?? 0), 10) || 0) + delta.y) + "px" }, device) : item)} /></div></div></div></main>
-      <aside className={"siteflow-inspector " + (inspectorOpen ? "" : "is-collapsed")} aria-label="Inspecteur de propriétés">{!isEditorNarrow ? <Inspector node={selected} device={device} tab={inspectorTab} onTab={setInspectorTab} onChangeProp={changeSelectedProp} onStyles={patchSelectedStyles} onUpload={handleImageUpload} uploading={uploadImage.isPending} onRename={(name) => updateSelectedNode((item) => ({ ...item, name }))} onDelete={() => { if (selected) { commit(removeNode(tree, selected.id)); setSelectedId(null); } }} onDuplicate={() => selected && commit(duplicateNode(tree, selected.id))} onClose={() => setInspectorOpen(false)} /> : null}</aside>
+      <aside className={"siteflow-editor-rail m-4 mr-0 rounded-2xl border border-[#E5E5EF] shadow-2xl " + (leftPanelOpen ? "" : "is-collapsed")} aria-label="Outils de création">
+        <div className="flex flex-1 flex-col gap-3 py-4">
+          {toolGroups.map((group) => (
+            <div key={group.label} className="space-y-1">
+              {group.items.map((item) => (
+                <button 
+                  key={item.panel} 
+                  onClick={() => openPanel(item.panel)} 
+                  className={"siteflow-rail-btn mx-auto " + (activePanel === item.panel ? "siteflow-rail-btn-active" : "")} 
+                  title={item.title} 
+                  aria-label={item.title}
+                >
+                  <item.icon className="h-[18px] w-[18px]" />
+                </button>
+              ))}
+            </div>
+          ))}
+        </div>
+        <button className="siteflow-rail-btn mb-4 mx-auto" title="Aide" aria-label="Aide"><CircleHelp className="h-5 w-5" /></button>
+      </aside>
+      
+      <aside className={"siteflow-editor-panel m-4 ml-0 rounded-2xl border border-[#E5E5EF] shadow-2xl transition-all " + (leftPanelOpen ? "" : "is-collapsed")} aria-label="Panneau de travail">
+        {!isEditorNarrow ? renderPanelContent() : null}
+      </aside>
+      
+      <main ref={canvasWrapRef} className="siteflow-canvas-wrap bg-dot-grid">
+        <div className="siteflow-canvas-toolbar siteflow-mobile-nav lg:hidden">
+          <button onClick={() => openPanel("add")}><Plus className="h-4 w-4" />Ajouter</button>
+          <button onClick={() => openPanel("pages")}><FileText className="h-4 w-4" />Pages</button>
+          <button onClick={() => openPanel("layers")}><Layers3 className="h-4 w-4" />Calques</button>
+          <button onClick={() => openPanel("theme")}><Palette className="h-4 w-4" />Design</button>
+          <button onClick={() => openPanel("assets")}><Image className="h-4 w-4" />Assets</button>
+          <button onClick={() => openPanel("settings")}><MoreHorizontal className="h-4 w-4" />Plus</button>
+        </div>
+        <div className="siteflow-canvas-stage">
+          <div className="siteflow-canvas-zoom" style={{ width: canvasWidth, transform: `scale(${zoom / 100})`, transformOrigin: 'top center' }}>
+            <div className="siteflow-document rounded-sm ring-1 ring-[#D6D9E4] transition-all" onClick={() => setSelectedId(null)}>
+              <SiteRenderer 
+                nodes={tree} 
+                theme={site.theme} 
+                device={device} 
+                editable 
+                selectedId={selectedId} 
+                onSelect={selectNode} 
+                onResize={(node, width) => updateSelectedNode((item) => item.id === node.id ? patchNodeStyle(item, { width: width + "px" }, device) : item)} 
+                onMove={(node, delta) => updateSelectedNode((item) => item.id === node.id ? patchNodeStyle(item, { marginLeft: ((parseInt(String(item.styles.marginLeft ?? 0), 10) || 0) + delta.x) + "px", marginTop: ((parseInt(String(item.styles.marginTop ?? 0), 10) || 0) + delta.y) + "px" }, device) : item)} 
+              />
+            </div>
+          </div>
+        </div>
+      </main>
+      
+      <aside className={"siteflow-inspector m-4 rounded-2xl border border-[#E5E5EF] shadow-2xl transition-all " + (inspectorOpen ? "" : "is-collapsed")} aria-label="Inspecteur de propriétés">
+        {!isEditorNarrow ? <Inspector node={selected} device={device} tab={inspectorTab} onTab={setInspectorTab} onChangeProp={changeSelectedProp} onStyles={patchSelectedStyles} onUpload={handleImageUpload} uploading={uploadImage.isPending} onRename={(name) => updateSelectedNode((item) => ({ ...item, name }))} onDelete={() => { if (selected) { commit(removeNode(tree, selected.id)); setSelectedId(null); } }} onDuplicate={() => selected && commit(duplicateNode(tree, selected.id))} onClose={() => setInspectorOpen(false)} /> : null}
+      </aside>
     </div>
     {isEditorNarrow && mobilePanel ? <div className="siteflow-mobile-sheet-backdrop" onClick={closeMobilePanel}><section className="siteflow-mobile-panel" onClick={(event) => event.stopPropagation()}><div className="flex items-center justify-between border-b border-[#E6E6ED] px-4 py-3"><div><p className="text-[10px] font-extrabold uppercase tracking-[.14em] text-[#7074D7]">Éditeur</p><h2 className="mt-1 text-sm font-extrabold">{toolGroups.flatMap((group) => group.items).find((item) => item.panel === mobilePanel)?.title ?? "Panneau"}</h2></div><button className="siteflow-icon-btn" onClick={closeMobilePanel} aria-label="Fermer le panneau"><X className="h-4 w-4" /></button></div><div className="max-h-[75vh] overflow-y-auto">{renderPanelContent()}</div></section></div> : null}
     {publishOpen ? <PublishDialog site={site} pages={siteQuery.data.pages} onClose={() => setPublishOpen(false)} onPublish={publishNow} loading={publishSite.isPending || savePage.isPending} /> : null}
