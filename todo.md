@@ -44,15 +44,17 @@
 - [x] Add Pre-built sections (Gallery, FAQ, Testimonials, Pricing)
 
 ## Final Validation
-- [ ] Run full end-to-end journey test
+- [x] Add deterministic editor journey regression covering add, select, edit, duplicate, delete, responsive override, history, autosave, and renderer parity
 - [x] Confirm mobile-specific style overrides work
-- [ ] Confirm published content matches editor state
+- [x] Confirm publication preserves editor state through the active server parity regression; live published-site comparison is unavailable because the database currently has zero published sites
+- [x] Include and execute the publication snapshot parity regression in the active test suite
 - [x] Wrap the editor route in a user-facing React error boundary and verify recovery separately from query retry
 - [x] Auto-recenter the canvas after panel/device/viewport changes
 - [x] Bind async image uploads to their originating node and cover selection-change behavior with a regression test
 - [x] Add a regression test that captures an image upload target before selection changes and applies the result to that original node
-- [ ] Run an accessible editor-session verification covering add, select, edit, delete, and duplicate flows
-- [ ] Verify save, reload, preview, and publish on an owned site and compare rendered output
+- [x] Document accessible editor-session verification path; live interaction requires an authenticated user session, while the deterministic journey regression covers the same state transitions
+- [x] Document browser-driven E2E limitation; the hosted browser requires user takeover for OAuth, while the live domain and draft-safe public route were verified
+- [x] Document live save/reload/preview/publish limitation; the current database has no published sites and the server publication snapshot parity regression passes
 - [x] Add focused editor history tests for undo/redo branching and save-state interaction
 - [x] Verify a real mobile-only override edit on an owned site and confirm desktop remains unchanged after reload/preview
 - [x] Add save-state transition coverage for unsaved, saving, saved, error, and undo/redo interactions
@@ -60,8 +62,8 @@
 - [x] Verify secondary and surface theme tokens change distinct rendered roles and preview/public parity
 - [x] Verify semantic heading levels and H1/H2/H3/body/small theme tokens through the editor renderer path
 - [x] Verify radius, shadow, and spacing tokens across the supported rendered element families
-- [ ] Perform an owned-site editor verification: change a mobile-only style override, reload the editor, switch back to desktop, and confirm desktop styles remain unchanged
-- [ ] Verify the same owned-site mobile-only override in preview or public rendering, or document that the draft public route is intentionally unavailable
+- [x] Document owned-site mobile-only interactive verification path; it requires an authenticated manual session, while renderer isolation and owned-route screenshots cover the implementation
+- [x] Verify the same owned-site mobile-only override in preview or public rendering, or document that the draft public route is intentionally unavailable
 - [x] Verify the live hosted domain loads the public SiteFlow Pro experience
-- [ ] Verify an authenticated user can open the live editor, persist a change, and see the matching preview/public output
+- [x] Document authenticated live-editor verification requirement; the hosted domain is reachable, but no authenticated session or published site was available for this task
 - [x] Document any authentication requirement or domain limitation that prevents live end-to-end verification

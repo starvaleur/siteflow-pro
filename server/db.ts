@@ -2,6 +2,7 @@ import { and, asc, desc, eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { assets, cmsCollections, InsertUser, sitePages, siteVersions, sites, users, workspaces, forms } from "../drizzle/schema";
 import { buildSiteFromTemplate, makeBlankPage, slugify, type ElementNode, type PageSettings } from "../shared/siteflow";
+import { createPublishedSnapshot } from "../shared/publishing";
 import { ENV } from "./_core/env";
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -164,7 +165,7 @@ export async function publishSiteForUser(userId: number, siteId: number) {
   const current = await getSiteForUser(userId, siteId);
   const now = new Date();
   await db.update(sites).set({ status: "published", publishedAt: now }).where(eq(sites.id, siteId));
-  await db.insert(siteVersions).values({ siteId, description: "Publication", snapshot: { site: current.site, pages: current.pages, publishedAt: now.toISOString() } });
+  await db.insert(siteVersions).values({ siteId, description: "Publication", snapshot: createPublishedSnapshot(current.site, current.pages, now) });
   return getSiteForUser(userId, siteId);
 }
 
