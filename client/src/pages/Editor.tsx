@@ -49,7 +49,7 @@ export default function Editor() {
   const [mobilePanel, setMobilePanel] = useState<Panel | null>(null);
   const [leftPanelOpen, setLeftPanelOpen] = useState(true);
   const [inspectorOpen, setInspectorOpen] = useState(true);
-  const [isEditorNarrow, setIsEditorNarrow] = useState(false);
+  const [isEditorNarrow, setIsEditorNarrow] = useState(() => typeof window !== "undefined" && window.innerWidth < 768);
   const [zoom, setZoom] = useState(100);
   const pageHydrated = useRef<number | null>(null);
   const treeRef = useRef<ElementNode[]>([]);
@@ -63,7 +63,7 @@ export default function Editor() {
   }, [device, isMobile]);
 
   useEffect(() => {
-    const media = window.matchMedia("(max-width: 900px)");
+    const media = window.matchMedia("(max-width: 767px)");
     const update = () => setIsEditorNarrow(media.matches);
     update();
     media.addEventListener("change", update);
@@ -114,10 +114,10 @@ export default function Editor() {
     setSaveStatus(result.saveStatus);
   }
 
-  function selectNode(node: ElementNode) { setSelectedId(node.id); setInspectorTab("content"); if (isEditorNarrow) setMobilePropertiesOpen(false); }
+  function selectNode(node: ElementNode) { setSelectedId(node.id); setInspectorTab("content"); if (isEditorNarrow) { setMobilePanel(null); setMobilePropertiesOpen(true); } }
   function openPanel(panel: Panel) {
     setActivePanel(panel);
-    if (isEditorNarrow) setMobilePanel(panel);
+    if (isEditorNarrow) { setMobilePropertiesOpen(false); setMobilePanel(panel); }
     else setLeftPanelOpen(true);
   }
   function closeMobilePanel() { setMobilePanel(null); }
@@ -132,6 +132,11 @@ export default function Editor() {
   }
   function fitCanvas() {
     const wrap = canvasWrapRef.current;
+    if (isMobile) {
+      setZoom(100);
+      requestAnimationFrame(recenterCanvas);
+      return;
+    }
     const available = (wrap?.clientWidth ?? 0) - 28;
     const nextZoom = available > 0 ? Math.max(50, Math.min(100, Math.floor((available / canvasBaseWidth) * 100))) : 100;
     setZoom(nextZoom);
@@ -191,7 +196,7 @@ export default function Editor() {
   const page = currentPage;
   const sitePages = siteQuery.data.pages;
   const canvasBaseWidth = device === "desktop" ? 990 : device === "tablet" ? 760 : 390;
-  const canvasWidth = canvasBaseWidth + "px";
+  const canvasWidth = isMobile ? "100%" : canvasBaseWidth + "px";
 
   function renderPanelContent() {
     return <>
@@ -223,13 +228,13 @@ export default function Editor() {
     <div className="siteflow-editor-content flex min-h-[calc(100vh-69px)]">
       <aside className={"siteflow-editor-rail " + (leftPanelOpen ? "" : "is-collapsed")} aria-label="Outils de création"><div className="flex flex-1 flex-col gap-3 py-4">{toolGroups.map((group) => <div key={group.label} className="space-y-1">{group.items.map((item) => <button key={item.panel} onClick={() => openPanel(item.panel)} className={"siteflow-rail-btn " + (activePanel === item.panel ? "siteflow-rail-btn-active" : "")} title={item.title} aria-label={item.title}><item.icon className="h-[19px] w-[19px]" /></button>)}</div>)}</div><button className="siteflow-rail-btn mb-4" title="Aide" aria-label="Aide"><CircleHelp className="h-5 w-5" /></button></aside>
       <aside className={"siteflow-editor-panel " + (leftPanelOpen ? "" : "is-collapsed")} aria-label="Panneau de travail">{!isEditorNarrow ? renderPanelContent() : null}</aside>
-      <main ref={canvasWrapRef} className="siteflow-canvas-wrap"><div className="siteflow-canvas-utility"><button onClick={zoomOut} className="siteflow-icon-btn" aria-label="Réduire le zoom">−</button><span aria-live="polite">{zoom}%</span><button onClick={zoomIn} className="siteflow-icon-btn" aria-label="Augmenter le zoom">+</button><button onClick={fitCanvas} className="siteflow-icon-btn" aria-label="Ajuster le canevas"><Maximize2 className="h-4 w-4" /></button></div><div className="siteflow-canvas-toolbar siteflow-mobile-nav lg:hidden"><button onClick={() => openPanel("add")}><Plus className="h-4 w-4" />Ajouter</button><button onClick={() => openPanel("pages")}><FileText className="h-4 w-4" />Pages</button><button onClick={() => openPanel("layers")}><Layers3 className="h-4 w-4" />Calques</button><button onClick={() => openPanel("theme")}><Palette className="h-4 w-4" />Design</button><button onClick={() => openPanel("assets")}><Image className="h-4 w-4" />Assets</button><button onClick={() => openPanel("settings")}><MoreHorizontal className="h-4 w-4" />Plus</button></div><div className="siteflow-canvas-stage"><div className="siteflow-canvas-zoom" style={{ width: canvasWidth, zoom: zoom / 100 }}><div className="siteflow-document" onClick={() => setSelectedId(null)}><SiteRenderer nodes={tree} theme={site.theme} device={device} editable selectedId={selectedId} onSelect={selectNode} onResize={(node, width) => updateSelectedNode((item) => item.id === node.id ? patchNodeStyle(item, { width: width + "px" }, device) : item)} onMove={(node, delta) => updateSelectedNode((item) => item.id === node.id ? patchNodeStyle(item, { marginLeft: ((parseInt(String(item.styles.marginLeft ?? 0), 10) || 0) + delta.x) + "px", marginTop: ((parseInt(String(item.styles.marginTop ?? 0), 10) || 0) + delta.y) + "px" }, device) : item)} /></div></div></div></main>
+      <main ref={canvasWrapRef} className="siteflow-canvas-wrap"><div className="siteflow-canvas-utility"><button onClick={zoomOut} className="siteflow-icon-btn" aria-label="Réduire le zoom">−</button><span aria-live="polite">{zoom}%</span><button onClick={zoomIn} className="siteflow-icon-btn" aria-label="Augmenter le zoom">+</button><button onClick={fitCanvas} className="siteflow-icon-btn" aria-label="Ajuster le canevas"><Maximize2 className="h-4 w-4" /></button></div><div className="siteflow-canvas-toolbar siteflow-mobile-nav md:hidden"><button onClick={() => openPanel("add")}><Plus className="h-4 w-4" />Add</button><button onClick={() => openPanel("pages")}><FileText className="h-4 w-4" />Pages</button><button onClick={() => openPanel("layers")}><Layers3 className="h-4 w-4" />Layers</button><button onClick={() => openPanel("theme")}><Palette className="h-4 w-4" />Design</button><button onClick={() => openPanel("settings")}><MoreHorizontal className="h-4 w-4" />More</button></div><div className="siteflow-canvas-stage"><div className="siteflow-canvas-zoom" style={{ width: canvasWidth, zoom: zoom / 100 }}><div className="siteflow-document" onClick={() => setSelectedId(null)}><SiteRenderer nodes={tree} theme={site.theme} device={device} editable selectedId={selectedId} onSelect={selectNode} onResize={(node, width) => updateSelectedNode((item) => item.id === node.id ? patchNodeStyle(item, { width: width + "px" }, device) : item)} onMove={(node, delta) => updateSelectedNode((item) => item.id === node.id ? patchNodeStyle(item, { marginLeft: ((parseInt(String(item.styles.marginLeft ?? 0), 10) || 0) + delta.x) + "px", marginTop: ((parseInt(String(item.styles.marginTop ?? 0), 10) || 0) + delta.y) + "px" }, device) : item)} /></div></div></div></main>
       <aside className={"siteflow-inspector " + (inspectorOpen ? "" : "is-collapsed")} aria-label="Inspecteur de propriétés">{!isEditorNarrow ? <Inspector node={selected} device={device} tab={inspectorTab} onTab={setInspectorTab} onChangeProp={changeSelectedProp} onStyles={patchSelectedStyles} onUpload={handleImageUpload} uploading={uploadImage.isPending} onRename={(name) => updateSelectedNode((item) => ({ ...item, name }))} onDelete={() => { if (selected) { commit(removeNode(tree, selected.id)); setSelectedId(null); } }} onDuplicate={() => selected && commit(duplicateNode(tree, selected.id))} onClose={() => setInspectorOpen(false)} /> : null}</aside>
     </div>
     {isEditorNarrow && mobilePanel ? <div className="siteflow-mobile-sheet-backdrop" onClick={closeMobilePanel}><section className="siteflow-mobile-panel" onClick={(event) => event.stopPropagation()}><div className="flex items-center justify-between border-b border-[#E6E6ED] px-4 py-3"><div><p className="text-[10px] font-extrabold uppercase tracking-[.14em] text-[#7074D7]">Éditeur</p><h2 className="mt-1 text-sm font-extrabold">{toolGroups.flatMap((group) => group.items).find((item) => item.panel === mobilePanel)?.title ?? "Panneau"}</h2></div><button className="siteflow-icon-btn" onClick={closeMobilePanel} aria-label="Fermer le panneau"><X className="h-4 w-4" /></button></div><div className="max-h-[75vh] overflow-y-auto">{renderPanelContent()}</div></section></div> : null}
     {publishOpen ? <PublishDialog site={site} pages={siteQuery.data.pages} onClose={() => setPublishOpen(false)} onPublish={publishNow} loading={publishSite.isPending || savePage.isPending} /> : null}
     {publishResult ? <PublishResult slug={siteQuery.data.site.slug} onClose={() => setPublishResult(false)} /> : null}
-    {selected ? <div className="siteflow-mobile-properties lg:hidden"><div><span className="block text-[10px] font-extrabold uppercase tracking-[.12em] text-[#6D70D8]">Élément sélectionné</span><strong className="mt-0.5 block text-xs">{selected.name}</strong></div><button onClick={() => { setInspectorTab("content"); setMobilePropertiesOpen(true); }} className="siteflow-secondary-btn !px-3 !py-2 text-[11px]" aria-label="Ouvrir les propriétés">Propriétés</button></div> : null}
+    {selected ? <div className="siteflow-mobile-properties md:hidden"><div><span className="block text-[10px] font-extrabold uppercase tracking-[.12em] text-[#6D70D8]">Élément sélectionné</span><strong className="mt-0.5 block text-xs">{selected.name}</strong></div><button onClick={() => { setInspectorTab("content"); setMobilePropertiesOpen(true); }} className="siteflow-secondary-btn !px-3 !py-2 text-[11px]" aria-label="Ouvrir les propriétés">Propriétés</button></div> : null}
     {isEditorNarrow && selected && mobilePropertiesOpen ? renderMobileInspector() : null}
   </div>;
 }

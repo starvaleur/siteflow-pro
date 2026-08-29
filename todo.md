@@ -80,3 +80,5 @@
 - [x] **Historical Snapshot Regression**: Added deterministic coverage for materializing a stored publication snapshot into the version preview response
 - [x] **Historical Snapshot Availability**: Current database inspection found one draft site and no valid published snapshot; authenticated publication is required for the final visual comparison
 
+- [x] Fix mobile editor layout below 768px: hide permanent sidebars, use full-width canvas, keep the exact five-action bottom toolbar, and keep bottom-sheet properties while preserving the desktop layout
+- [ ] Complete authenticated browser visual verification of the mobile editor at 390px and desktop preservation at 1280px
