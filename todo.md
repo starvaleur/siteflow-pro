@@ -83,3 +83,4 @@
 - [x] Fix mobile editor layout below 768px: hide permanent sidebars, use full-width canvas, keep the exact five-action bottom toolbar, and keep bottom-sheet properties while preserving the desktop layout
 - [ ] Complete authenticated browser visual verification of the mobile editor at 390px and desktop preservation at 1280px
 - [x] Add smooth slide-up animation to the mobile properties bottom sheet with reduced-motion support; validated with TypeScript, 21 Vitest tests, and production build
+- [x] Align editor canvas width and device behavior to the existing below-768px shell breakpoint so the mobile canvas cannot render with desktop sizing

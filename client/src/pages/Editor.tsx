@@ -1,7 +1,7 @@
 import { SiteRenderer } from "@/components/siteflow/SiteRenderer";
 import { appendNode, applyUploadedImage, createElement, duplicateNode, elementLabels, findNode, moveNodeBefore, patchNodeStyle, removeNode, reorderSibling, updateNode } from "@/components/siteflow/tree";
 import { SiteFlowLogo } from "@/components/siteflow/AppShell";
-import { useIsMobile } from "@/hooks/useMobile";
+import { MOBILE_BREAKPOINT } from "@/hooks/useMobile";
 import { trpc } from "@/lib/trpc";
 import type { DeviceMode, ElementNode, ElementType, SiteTheme, StyleMap } from "../../../shared/siteflow";
 import { AlignCenter, AlignLeft, AlignRight, Archive, ArrowDown, ArrowUp, BarChart3, Box, Check, ChevronDown, ChevronLeft, ChevronRight, CircleHelp, ClipboardCopy, Cloud, Code2, Copy, Database, Eye, FilePlus2, FileText, FolderOpen, FormInput, Globe2, Image, LayoutPanelLeft, Layers3, Link, Lock, Menu, Monitor, MoreHorizontal, MousePointer2, Palette, PanelLeftClose, Pencil, Plus, Maximize2, Redo2, Rocket, Search, Settings2, Smartphone, Sparkles, Tablet, Trash2, Undo2, Upload, Wand2, X } from "lucide-react";
@@ -31,7 +31,6 @@ export default function Editor() {
   const [, params] = useRoute("/editor/:id");
   const siteId = Number(params?.id);
   const [, setLocation] = useLocation();
-  const isMobile = useIsMobile();
   const utils = trpc.useUtils();
   const siteQuery = trpc.siteflow.get.useQuery({ siteId }, { enabled: Number.isFinite(siteId) && siteId > 0 });
   const [activePanel, setActivePanel] = useState<Panel>("add");
@@ -49,7 +48,7 @@ export default function Editor() {
   const [mobilePanel, setMobilePanel] = useState<Panel | null>(null);
   const [leftPanelOpen, setLeftPanelOpen] = useState(true);
   const [inspectorOpen, setInspectorOpen] = useState(true);
-  const [isEditorNarrow, setIsEditorNarrow] = useState(() => typeof window !== "undefined" && window.innerWidth < 768);
+  const [isEditorNarrow, setIsEditorNarrow] = useState(() => typeof window !== "undefined" && window.innerWidth < MOBILE_BREAKPOINT);
   const [zoom, setZoom] = useState(100);
   const pageHydrated = useRef<number | null>(null);
   const treeRef = useRef<ElementNode[]>([]);
@@ -59,11 +58,11 @@ export default function Editor() {
   const selected = useMemo(() => selectedId ? findNode(tree, selectedId) : undefined, [selectedId, tree]);
 
   useEffect(() => {
-    if (isMobile && device === "desktop") setDevice("mobile");
-  }, [device, isMobile]);
+    if (isEditorNarrow && device === "desktop") setDevice("mobile");
+  }, [device, isEditorNarrow]);
 
   useEffect(() => {
-    const media = window.matchMedia("(max-width: 767px)");
+    const media = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`);
     const update = () => setIsEditorNarrow(media.matches);
     update();
     media.addEventListener("change", update);
@@ -132,7 +131,7 @@ export default function Editor() {
   }
   function fitCanvas() {
     const wrap = canvasWrapRef.current;
-    if (isMobile) {
+    if (isEditorNarrow) {
       setZoom(100);
       requestAnimationFrame(recenterCanvas);
       return;
@@ -196,7 +195,7 @@ export default function Editor() {
   const page = currentPage;
   const sitePages = siteQuery.data.pages;
   const canvasBaseWidth = device === "desktop" ? 990 : device === "tablet" ? 760 : 390;
-  const canvasWidth = isMobile ? "100%" : canvasBaseWidth + "px";
+  const canvasWidth = isEditorNarrow ? "100%" : canvasBaseWidth + "px";
 
   function renderPanelContent() {
     return <>
