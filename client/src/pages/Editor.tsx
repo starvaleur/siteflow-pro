@@ -12,6 +12,17 @@ import { applyHistoryAction, nextSaveStatus } from "./editorState";
 
 type Panel = "add" | "components" | "pages" | "layers" | "theme" | "assets" | "cms" | "forms" | "seo" | "analytics" | "settings";
 
+export const DEVICE_CANVAS_WIDTHS: Record<DeviceMode, number> = { desktop: 990, tablet: 760, mobile: 390 };
+
+export function getCanvasBaseWidth(device: DeviceMode) {
+  return DEVICE_CANVAS_WIDTHS[device];
+}
+
+export function getFitZoom(availableWidth: number, canvasWidth: number) {
+  if (availableWidth <= 0 || canvasWidth <= 0) return 100;
+  return Math.max(50, Math.min(100, Math.floor((availableWidth / canvasWidth) * 100)));
+}
+
 const toolGroups: Array<{ label: string; items: Array<{ panel: Panel; icon: typeof Plus; title: string }> }> = [
   { label: "Construire", items: [{ panel: "add", icon: Plus, title: "Ajouter" }, { panel: "components", icon: Box, title: "Composants" }, { panel: "layers", icon: Layers3, title: "Calques" }, { panel: "theme", icon: Palette, title: "Thème" }] },
   { label: "Contenu", items: [{ panel: "pages", icon: FileText, title: "Pages" }, { panel: "assets", icon: Image, title: "Assets" }, { panel: "cms", icon: Database, title: "CMS" }, { panel: "forms", icon: FormInput, title: "Formulaires" }] },
@@ -137,7 +148,7 @@ export default function Editor() {
       return;
     }
     const available = (wrap?.clientWidth ?? 0) - 28;
-    const nextZoom = available > 0 ? Math.max(50, Math.min(100, Math.floor((available / canvasBaseWidth) * 100))) : 100;
+    const nextZoom = getFitZoom(available, canvasBaseWidth);
     setZoom(nextZoom);
     requestAnimationFrame(() => {
       const currentWrap = canvasWrapRef.current;
@@ -194,7 +205,7 @@ export default function Editor() {
   const site = siteQuery.data.site;
   const page = currentPage;
   const sitePages = siteQuery.data.pages;
-  const canvasBaseWidth = device === "desktop" ? 990 : device === "tablet" ? 760 : 390;
+  const canvasBaseWidth = getCanvasBaseWidth(device);
   const canvasWidth = isEditorNarrow ? "100%" : canvasBaseWidth + "px";
 
   function renderPanelContent() {

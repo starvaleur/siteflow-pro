@@ -84,3 +84,4 @@
 - [ ] Complete authenticated browser visual verification of the mobile editor at 390px and desktop preservation at 1280px
 - [x] Add smooth slide-up animation to the mobile properties bottom sheet with reduced-motion support; validated with TypeScript, 21 Vitest tests, and production build
 - [x] Align editor canvas width and device behavior to the existing below-768px shell breakpoint so the mobile canvas cannot render with desktop sizing
+- [x] Fix editor canvas workspace behavior: remaining-space flex sizing with collapsible panels, centering, zoom in/out, fit-to-screen, and separate responsive device-width simulation; covered by canvas helper regression tests and build validation, while authenticated route screenshots remain blocked because the current dashboard has no site
