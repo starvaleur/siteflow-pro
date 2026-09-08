@@ -324,10 +324,10 @@
   .siteflow-canvas-toolbar { position:fixed; top:auto; right:0; bottom:0; left:0; z-index:55; display:flex; height:68px; justify-content:space-around; gap:0; overflow:visible; border-top:1px solid #DCDDE8; border-bottom:0; padding:.35rem .25rem calc(.35rem + env(safe-area-inset-bottom)); box-shadow:0 -8px 26px rgba(17,20,72,.08); }
   .siteflow-canvas-toolbar button { flex:1; flex-direction:column; justify-content:center; gap:.2rem; background:transparent; padding:.3rem .1rem; font-size:.58rem; }
   .siteflow-canvas-toolbar button:hover { color:#2925D8; }
-  .siteflow-canvas-stage { min-height:calc(100vh - 58px); min-width:0; padding:28px 14px 118px; }
+  .siteflow-canvas-stage { box-sizing:border-box; width:100%; min-height:calc(100vh - 58px); min-width:0; padding:28px 14px 118px; }
   .siteflow-mobile-properties { bottom:82px; }
-  .siteflow-canvas-zoom { max-width:none; width:100%; }
-  .siteflow-document { width:100%; }
+  .siteflow-canvas-zoom { box-sizing:border-box; max-width:none; width:100%; }
+  .siteflow-document { box-sizing:border-box; width:100%; max-width:100%; }
   .siteflow-document { min-height:580px; }
   .siteflow-canvas-utility { position:fixed; top:70px; right:12px; z-index:54; margin:0; }
   .siteflow-mobile-nav { display:flex; }
