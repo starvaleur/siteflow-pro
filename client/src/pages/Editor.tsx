@@ -23,6 +23,11 @@ export function getFitZoom(availableWidth: number, canvasWidth: number) {
   return Math.max(50, Math.min(100, Math.floor((availableWidth / canvasWidth) * 100)));
 }
 
+export function getEditorRecoverySiteId(requestedSiteId: number, sites: Array<{ id: number }>) {
+  if (sites.some((site) => site.id === requestedSiteId)) return null;
+  return sites[0]?.id ?? null;
+}
+
 const toolGroups: Array<{ label: string; items: Array<{ panel: Panel; icon: typeof Plus; title: string }> }> = [
   { label: "Construire", items: [{ panel: "add", icon: Plus, title: "Ajouter" }, { panel: "components", icon: Box, title: "Composants" }, { panel: "layers", icon: Layers3, title: "Calques" }, { panel: "theme", icon: Palette, title: "Thème" }] },
   { label: "Contenu", items: [{ panel: "pages", icon: FileText, title: "Pages" }, { panel: "assets", icon: Image, title: "Assets" }, { panel: "cms", icon: Database, title: "CMS" }, { panel: "forms", icon: FormInput, title: "Formulaires" }] },
@@ -44,6 +49,8 @@ export default function Editor() {
   const [, setLocation] = useLocation();
   const utils = trpc.useUtils();
   const siteQuery = trpc.siteflow.get.useQuery({ siteId }, { enabled: Number.isFinite(siteId) && siteId > 0 });
+  const needsSiteRecovery = siteQuery.isError || (!siteQuery.isLoading && !siteQuery.data);
+  const accessibleSitesQuery = trpc.siteflow.list.useQuery(undefined, { enabled: needsSiteRecovery });
   const [activePanel, setActivePanel] = useState<Panel>("add");
   const [device, setDevice] = useState<DeviceMode>("desktop");
   const [currentPageId, setCurrentPageId] = useState<number | null>(null);
@@ -105,6 +112,14 @@ export default function Editor() {
     setInspectorTab("design");
     setSaveStatus("saved");
   }, [currentPageId, siteQuery.data?.pages]);
+
+  useEffect(() => {
+    if (!needsSiteRecovery || !accessibleSitesQuery.data?.length) return;
+    const recoverySiteId = getEditorRecoverySiteId(siteId, accessibleSitesQuery.data);
+    if (recoverySiteId && recoverySiteId !== siteId) {
+      setLocation(`/editor/${recoverySiteId}`);
+    }
+  }, [accessibleSitesQuery.data, needsSiteRecovery, setLocation, siteId]);
 
   useEffect(() => {
     if (!currentPage || historyIndex <= 0 || JSON.stringify(tree) === JSON.stringify(currentPage.elementTree)) return;
@@ -200,7 +215,7 @@ export default function Editor() {
   function publishNow() { if (!currentPage) return; savePage.mutate({ pageId: currentPage.id, elementTree: tree }, { onSuccess: () => publishSite.mutate({ siteId }) }); }
 
   if (siteQuery.isLoading) return <div className="grid min-h-screen place-items-center bg-[#F8F8FC]"><div className="text-center"><div className="siteflow-loader mx-auto" /><p className="mt-4 text-xs font-semibold text-[#717487]">Chargement de votre éditeur…</p></div></div>;
-  if (siteQuery.isError) return <div className="grid min-h-screen place-items-center bg-[#F8F8FC] px-5"><div className="max-w-sm text-center"><span className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-[#FFF2E9] text-[#A85E31]"><CircleHelp className="h-6 w-6" /></span><h1 className="mt-5 font-display text-3xl">Impossible de charger ce projet.</h1><p className="mt-2 text-sm leading-6 text-[#717487]">Le projet n’a pas pu être récupéré. Vérifiez votre connexion puis réessayez.</p><div className="mt-5 flex justify-center gap-3"><button className="siteflow-secondary-btn" onClick={() => setLocation("/")}>Retour</button><button className="siteflow-primary-btn" onClick={() => siteQuery.refetch()}>Réessayer</button></div></div></div>;
+  if (needsSiteRecovery) return <div className="grid min-h-screen place-items-center bg-[#F8F8FC] px-5"><div className="max-w-sm text-center"><span className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-[#FFF2E9] text-[#A85E31]"><CircleHelp className="h-6 w-6" /></span><h1 className="mt-5 font-display text-3xl">Impossible de charger ce projet.</h1><p className="mt-2 text-sm leading-6 text-[#717487]">{accessibleSitesQuery.isLoading ? "Recherche de votre dernier projet accessible…" : "Le projet n’a pas pu être récupéré. Vérifiez votre connexion puis réessayez."}</p><div className="mt-5 flex justify-center gap-3"><button className="siteflow-secondary-btn" onClick={() => setLocation("/")}>Retour</button><button className="siteflow-primary-btn" onClick={() => siteQuery.refetch()}>Réessayer</button></div></div></div>;
   if (!siteQuery.data || !currentPage) return <div className="grid min-h-screen place-items-center bg-[#F8F8FC]"><div className="text-center"><h1 className="font-display text-4xl">Projet introuvable.</h1><button className="siteflow-primary-btn mt-4" onClick={() => setLocation("/")}>Retour aux sites</button></div></div>;
   const site = siteQuery.data.site;
   const page = currentPage;
