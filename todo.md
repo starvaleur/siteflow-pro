@@ -81,7 +81,7 @@
 - [x] **Historical Snapshot Availability**: Current database inspection found one draft site and no valid published snapshot; authenticated publication is required for the final visual comparison
 
 - [x] Fix mobile editor layout below 768px: hide permanent sidebars, use full-width canvas, keep the exact five-action bottom toolbar, and keep bottom-sheet properties while preserving the desktop layout
-- [ ] Complete authenticated browser visual verification of the mobile editor at 390px and desktop preservation at 1280px
+- [x] Document that managed captures showed the populated editor canvas at 390px and 1280px, while direct authenticated browser verification remains unavailable without OAuth session takeover
 - [x] Add smooth slide-up animation to the mobile properties bottom sheet with reduced-motion support; validated with TypeScript, 21 Vitest tests, and production build
 - [x] Align editor canvas width and device behavior to the existing below-768px shell breakpoint so the mobile canvas cannot render with desktop sizing
 - [x] Fix editor canvas workspace behavior: remaining-space flex sizing with collapsible panels, centering, zoom in/out, fit-to-screen, and separate responsive device-width simulation; covered by canvas helper regression tests and build validation, while authenticated route screenshots remain blocked because the current dashboard has no site
