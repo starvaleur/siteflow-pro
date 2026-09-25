@@ -13,6 +13,8 @@ import { applyHistoryAction, nextSaveStatus } from "./editorState";
 type Panel = "add" | "components" | "pages" | "layers" | "theme" | "assets" | "cms" | "forms" | "seo" | "analytics" | "settings";
 
 export const DEVICE_CANVAS_WIDTHS: Record<DeviceMode, number> = { desktop: 990, tablet: 760, mobile: 390 };
+export const MIN_CANVAS_ZOOM = 25;
+export const MAX_CANVAS_ZOOM = 125;
 
 export function getCanvasBaseWidth(device: DeviceMode) {
   return DEVICE_CANVAS_WIDTHS[device];
@@ -20,7 +22,7 @@ export function getCanvasBaseWidth(device: DeviceMode) {
 
 export function getFitZoom(availableWidth: number, canvasWidth: number) {
   if (availableWidth <= 0 || canvasWidth <= 0) return 100;
-  return Math.max(50, Math.min(100, Math.floor((availableWidth / canvasWidth) * 100)));
+  return Math.max(MIN_CANVAS_ZOOM, Math.min(100, Math.floor((availableWidth / canvasWidth) * 100)));
 }
 
 export function getEditorRecoverySiteId(requestedSiteId: number, sites: Array<{ id: number }>) {
@@ -146,8 +148,8 @@ export default function Editor() {
     else setLeftPanelOpen(true);
   }
   function closeMobilePanel() { setMobilePanel(null); }
-  function zoomIn() { setZoom((value) => Math.min(125, value + 10)); }
-  function zoomOut() { setZoom((value) => Math.max(50, value - 10)); }
+  function zoomIn() { setZoom((value) => Math.min(MAX_CANVAS_ZOOM, value + 10)); }
+  function zoomOut() { setZoom((value) => Math.max(MIN_CANVAS_ZOOM, value - 10)); }
   function recenterCanvas() {
     requestAnimationFrame(() => {
       const wrap = canvasWrapRef.current;

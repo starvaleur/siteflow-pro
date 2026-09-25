@@ -11,7 +11,8 @@ describe("editor canvas workspace", () => {
   it("fits the simulated page into remaining canvas space without exceeding 100%", () => {
     expect(getFitZoom(960, 990)).toBe(96);
     expect(getFitZoom(1600, 990)).toBe(100);
-    expect(getFitZoom(300, 990)).toBe(50);
+    expect(getFitZoom(435, 990)).toBe(43);
+    expect(getFitZoom(200, 990)).toBe(25);
     expect(getFitZoom(0, 990)).toBe(100);
   });
 });
