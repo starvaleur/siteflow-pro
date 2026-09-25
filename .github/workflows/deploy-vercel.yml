@@ -1,0 +1,77 @@
+# SiteFlow-Pro — Deploy to Vercel
+#
+# Required GitHub Secrets:
+#   VERCEL_TOKEN             — Vercel account token
+#   VERCEL_ORG_ID            — `vercel link` output
+#   VERCEL_PROJECT_ID        — `vercel link` output
+#   LHCI_GITHUB_APP_TOKEN    — for Lighthouse PR comments (optional)
+
+name: Deploy (Vercel)
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-vercel-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  deployments: write
+  pull-requests: write
+  id-token: write # Required for Vercel OIDC in 2026
+
+jobs:
+  deploy:
+    name: Vercel Deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: ${{ github.ref == 'refs/heads/main' && 'production' || 'preview' }}
+      url: ${{ steps.deploy.outputs.url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: "10"
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        env:
+          VERCEL: "1"
+        run: pnpm build:client
+
+      - name: Deploy to Vercel
+        id: deploy
+        uses: vercel/actions/deploy@v1
+        with:
+          vercel-json: vercel.json
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: ./
+          github-comment: false
+
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: vercel-preview
+          message: |
+            Vercel preview deployed: **${{ steps.deploy.outputs.url }}**

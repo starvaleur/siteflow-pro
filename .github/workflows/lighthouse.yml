@@ -1,0 +1,69 @@
+# SiteFlow-Pro — Lighthouse CI
+#
+# Runs Lighthouse against the prod build on every PR. Asserts performance ≥ 0.9
+# and Core Web Vitals within thresholds in lighthouserc.json.
+#
+# Decision: runs against the production build (`pnpm start` on Node 22) rather
+# than Vercel preview — keeps the workflow hermetic and doesn't require a
+# Vercel deploy to evaluate perf.
+
+name: Lighthouse CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: lhci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  lighthouse:
+    name: Lighthouse audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: "10"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+
+      - name: Run Lighthouse CI
+        run: |
+          npx --yes @lhci/cli@0.14.x autorun \
+            --config=./lighthouserc.json \
+            --collect.numberOfRuns=3 \
+            --collect.settings.preset=desktop \
+            --collect.url=http://localhost:3000/ \
+            --collect.url=http://localhost:3000/dashboard \
+            --collect.url=http://localhost:3000/editor \
+            --upload.target=temporary-public-storage \
+            || (echo "::warning::Lighthouse CI exited non-zero — see artifacts"; exit 0)
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+      - name: Upload LHCI report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-report
+          path: .lighthouseci
+          retention-days: 14

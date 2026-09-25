@@ -1,0 +1,110 @@
+# SiteFlow-Pro — Deploy to AWS (ECS Fargate behind CloudFront)
+#
+# Path for the Express + tRPC + MySQL stack. Assumes IaC in infra/aws/ has
+# been applied once to bootstrap ECS cluster + RDS + ALB + CloudFront + ACM.
+#
+# Required secrets:
+#   AWS_DEPLOY_ROLE_ARN     — IAM role with ecs:UpdateService permissions
+#   ECS_CLUSTER_NAME
+#   ECS_SERVICE_NAME
+#   ECS_CONTAINER_NAME
+
+name: Deploy (AWS ECS)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "Dockerfile"
+      - "server/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/deploy-aws.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-aws-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  AWS_REGION: us-east-1
+  ECS_CLUSTER: ${{ secrets.ECS_CLUSTER_NAME }}
+  ECS_SERVICE: ${{ secrets.ECS_SERVICE_NAME }}
+  CONTAINER_NAME: ${{ secrets.ECS_CONTAINER_NAME }}
+  IMAGE: ghcr.io/${{ github.repository }}:sha-${{ github.sha }}
+
+jobs:
+  deploy:
+    name: ECS rolling deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    environment:
+      name: production
+      url: https://siteflow.app
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Download task definition
+        run: |
+          aws ecs describe-task-definition \
+            --task-definition ${{ env.ECS_SERVICE }} \
+            --query taskDefinition > task-def.json
+
+      - name: Render new task definition
+        env:
+          IMAGE: ${{ env.IMAGE }}
+          BUILD_SHA: ${{ github.sha }}
+        run: |
+          jq --arg IMAGE "$IMAGE" --arg SHA "$BUILD_SHA" '
+            .containerDefinitions |= map(
+              if .name == env.CONTAINER_NAME
+              then .image = $IMAGE |
+                   (.environment // []) |= map(
+                     if .name == "BUILD_SHA" then .value = $SHA else . end
+                   )
+              else . end
+            ) |
+            { family: .family,
+              taskRoleArn: .taskRoleArn,
+              executionRoleArn: .executionRoleArn,
+              networkMode: .networkMode,
+              containerDefinitions: .containerDefinitions,
+              volumes: .volumes,
+              placementConstraints: .placementConstraints,
+              requiresCompatibilities: .requiresCompatibilities,
+              cpu: .cpu,
+              memory: .memory,
+              runtimePlatform: .runtimePlatform }
+          ' task-def.json > task-def-new.json
+
+      - name: Register new task definition
+        id: register
+        run: |
+          REV=$(aws ecs register-task-definition \
+            --cli-input-json file://task-def-new.json \
+            --query 'taskDefinition.revision' --output text)
+          echo "rev=$REV" >> "$GITHUB_OUTPUT"
+
+      - name: Update service
+        run: |
+          aws ecs update-service \
+            --cluster ${{ env.ECS_CLUSTER }} \
+            --service ${{ env.ECS_SERVICE }} \
+            --task-definition ${{ env.ECS_CLUSTER }}:${{ steps.register.outputs.rev }} \
+            --force-new-deployment
+
+      - name: Wait for stable
+        run: |
+          aws ecs wait services-stable \
+            --cluster ${{ env.ECS_CLUSTER }} \
+            --services ${{ env.ECS_SERVICE }}
